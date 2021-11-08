@@ -9,19 +9,26 @@ import io.github.spaceshooter.engine.component.basic.CollisionDebugger;
 import io.github.spaceshooter.engine.component.basic.Sprite;
 import io.github.spaceshooter.engine.component.collision.SphereCollider;
 import io.github.spaceshooter.engine.math.Vector2f;
+import io.github.spaceshooter.space.general.LivingComponent;
+import io.github.spaceshooter.space.player.Bullet;
 import io.github.spaceshooter.space.player.PlayerData;
 import io.github.spaceshooter.util.Validate;
 
-public class Asteroid extends Sprite implements TickableComponent, CollisionListenerComponent {
+public class Asteroid extends LivingComponent implements TickableComponent, CollisionListenerComponent {
+
+    public static final int MAX_HEALTH = 20;
 
     private Vector2f direction = new Vector2f(-1, 0);
     private float velocity = 0.5f;
     private int inflictedDamage = 20;
 
     public Asteroid(GameObject gameObject) {
-        super(gameObject);
-        setBitmap(R.drawable.a10000);
-        setSpriteScale(new Vector2f(0.2f, 0.2f));
+        super(gameObject, MAX_HEALTH);
+
+        Sprite sprite = gameObject.addComponent(Sprite.class);
+        sprite.setBitmap(R.drawable.a10000);
+        sprite.setSpriteScale(new Vector2f(0.2f, 0.2f));
+
         SphereCollider collider = gameObject.addComponent(SphereCollider.class);
         collider.setRadius(0.05f);
         gameObject.addComponent(CollisionDebugger.class);
@@ -64,13 +71,28 @@ public class Asteroid extends Sprite implements TickableComponent, CollisionList
 
     @Override
     public void onCollision(Collision collision) {
-        getScene().destroyGameObject(gameObject);
+        GameObject o = collision.getOtherCollider().getGameObject();
 
-        PlayerData data = collision.getOtherCollider()
-                .getGameObject().getComponent(PlayerData.class);
-
-        if (data != null) {
-            data.damage(inflictedDamage);
+        if (o.getComponent(Bullet.class) != null) {
+            damage(10);
         }
+
+        if (o.getComponent(Asteroid.class) != null) {
+            damage(getMaxHealth());
+            return;
+        }
+
+        PlayerData data = o.getComponent(PlayerData.class);
+        if (data != null) {
+            getScene().destroyGameObject(gameObject);
+            damage(getMaxHealth());
+            data.damage(20);
+        }
+
+    }
+
+    @Override
+    protected void onDeath() {
+        getScene().destroyGameObject(gameObject);
     }
 }

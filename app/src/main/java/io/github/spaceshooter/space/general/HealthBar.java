@@ -1,4 +1,4 @@
-package io.github.spaceshooter.space.player;
+package io.github.spaceshooter.space.general;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -21,15 +21,24 @@ public class HealthBar extends BasicComponent implements GUIComponent {
         paint.setColor(0xFFFF0000);
     }
 
-    private final PlayerData playerData;
+    private LivingComponent livingComponent;
 
     public HealthBar(GameObject gameObject) {
         super(gameObject);
-        playerData = gameObject.getComponent(PlayerData.class);
+    }
+
+    public LivingComponent getLivingComponent() {
+        return livingComponent;
+    }
+
+    public void setLivingComponent(LivingComponent livingComponent) {
+        this.livingComponent = livingComponent;
     }
 
     @Override
     public void draw(Canvas canvas, GameView view) {
+        if (livingComponent == null) return;
+
         float max = view.getGUIWidth() - SPACING;
 
         canvas.drawRect(
@@ -40,7 +49,7 @@ public class HealthBar extends BasicComponent implements GUIComponent {
                 background
         );
 
-        float percentage = playerData.getHealth() / (float) PlayerData.MAX_HEALTH;
+        float percentage = livingComponent.getHealth() / (float) livingComponent.getMaxHealth();
 
         canvas.drawRect(
                 SPACING,

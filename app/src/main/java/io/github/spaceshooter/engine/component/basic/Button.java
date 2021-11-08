@@ -15,28 +15,22 @@ import io.github.spaceshooter.engine.input.InputUpEvent;
 import io.github.spaceshooter.engine.math.Vector2f;
 import io.github.spaceshooter.util.Validate;
 
-public class Joystick extends BasicComponent
+public class Button extends BasicComponent
         implements InputListenerComponent, GameStatusListenerComponent, GUIComponent {
 
     private Vector2f size = new Vector2f(0.3f, 0.3f);
-    private Vector2f offset = new Vector2f(0.15f, -0.15f);
+    private Vector2f offset = new Vector2f(-0.15f, -0.15f);
 
-    private Vector2f factor = Vector2f.ZERO;
-
-    private boolean executing;
+    private boolean pressed;
     private int targetJoystick;
-    private Vector2f startPosition;
-
     private final Paint paint;
 
-    public Joystick(GameObject gameObject) {
+    private Runnable onPress, onRelease;
+
+    public Button(GameObject gameObject) {
         super(gameObject);
         paint = new Paint();
         paint.setColor(0x77777777);
-    }
-
-    public Vector2f getFactor() {
-        return factor;
     }
 
     public Vector2f getSize() {
@@ -61,63 +55,60 @@ public class Joystick extends BasicComponent
         paint.setColor(color);
     }
 
-    @Override
-    public void onInputDown(InputDownEvent event) {
-        if (executing) return;
 
-        Vector2f pos = event.getScreenPosition().sub(0, 1 - size.y()).sub(offset);
+    public void setOnPress(Runnable onPress) {
+        this.onPress = onPress;
+    }
 
-        if (!isInside(pos)) return;
-
-        startPosition = event.getScreenPosition();
-        targetJoystick = event.getPointer();
-        executing = true;
-        factor = Vector2f.ZERO;
+    public void setOnRelease(Runnable onRelease) {
+        this.onRelease = onRelease;
     }
 
     @Override
-    public void onInputMove(InputMoveEvent event) {
-        if (!executing || event.getSize() <= targetJoystick) return;
+    public void onInputDown(InputDownEvent event) {
+        if (pressed) return;
 
-        factor = event.getScreenPosition(targetJoystick)
-                .sub(startPosition)
-                .div(size.div(2));
+        float w = getScene().getEngine().getGameView().getGUIWidth();
+        Vector2f pos = event.getScreenPosition().sub(w - size.x(), 1 - size.y()).sub(offset);
 
-        float mag = factor.magnitudeSquared();
-        if (mag > 1) {
-            factor = factor.div((float) Math.sqrt(mag));
+        if (!isInside(pos)) return;
+
+        targetJoystick = event.getPointer();
+        pressed = true;
+        if (onPress != null) {
+            onPress.run();
         }
     }
 
     @Override
+    public void onInputMove(InputMoveEvent event) {
+    }
+
+    @Override
     public void onInputUp(InputUpEvent event) {
-        if (!executing || event.getPointer() != targetJoystick) return;
-        executing = false;
-        factor = Vector2f.ZERO;
+        if (!pressed || event.getPointer() != targetJoystick) return;
+        pressed = false;
+        if (onRelease != null) {
+            onRelease.run();
+        }
     }
 
     @Override
     public void draw(Canvas canvas, GameView view) {
-        Vector2f pos = new Vector2f(0, 1 - size.y()).add(offset);
-
-        Vector2f size2 = size.div(2);
-        Vector2f centerPos = pos.add(size2);
-        Vector2f joyPos = centerPos.add(size2.mul(factor));
-
-        canvas.drawCircle(centerPos.x(), centerPos.y(), size.x() / 6, paint);
-        canvas.drawCircle(joyPos.x(), joyPos.y(), size.x() / 3, paint);
+        float w = view.getGUIWidth();
+        Vector2f pos = new Vector2f(w - size.x(), 1 - size.y()).add(offset);
+        Vector2f centerPos = pos.add(size.div(2));
+        canvas.drawCircle(centerPos.x(), centerPos.y(), size.x() / 3, paint);
     }
 
     @Override
     public void onSceneDetach() {
-        executing = false;
-        factor = Vector2f.ZERO;
+        pressed = false;
     }
 
     @Override
     public void onPause() {
-        executing = false;
-        factor = Vector2f.ZERO;
+        pressed = false;
     }
 
     @Override
