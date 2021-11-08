@@ -26,6 +26,10 @@ public class SphereCollider extends BasicComponent implements ColliderComponent 
         return radius;
     }
 
+    public float getRadiusSquared() {
+        return radiusSquared;
+    }
+
     public void setRadius(float radius) {
         this.radius = radius;
         this.radiusSquared = radius * radius;

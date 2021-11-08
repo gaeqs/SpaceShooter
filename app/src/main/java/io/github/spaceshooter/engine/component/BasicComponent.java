@@ -1,5 +1,7 @@
 package io.github.spaceshooter.engine.component;
 
+import androidx.annotation.NonNull;
+
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -29,11 +31,10 @@ public class BasicComponent implements Component {
         return gameObject;
     }
 
+    @NonNull
     @Override
     public String toString() {
-        return "BasicComponent{" +
-                "id=" + id +
-                '}';
+        return getClass().getSimpleName() + "{" + "id=" + id + '}';
     }
 
     @Override

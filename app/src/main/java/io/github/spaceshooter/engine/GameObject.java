@@ -116,19 +116,19 @@ public class GameObject {
         return getScene().findComponent(type);
     }
 
+    public ReentrantLock getLock() {
+        return lock;
+    }
+
     // region synchronization
 
     void setDrawing(boolean drawing) {
         this.drawing = drawing;
     }
 
-    ReentrantLock getLock() {
-        return lock;
-    }
-
     // endregion
 
-    void notifyCollision(Collision collision) {
+    public void notifyCollision(Collision collision) {
         Validate.notNull(collision, "Collision cannot be null!");
         collisionListeners.forEach(it -> {
             try {
@@ -162,5 +162,15 @@ public class GameObject {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+
+    @Override
+    public String toString() {
+        return "GameObject{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", components=" + components +
+                '}';
     }
 }

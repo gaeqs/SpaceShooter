@@ -61,7 +61,8 @@ public class Bullet extends Sprite implements TickableComponent, CollisionListen
     @Override
     public void tick(float deltaSeconds) {
         gameObject.getTransform().move(direction.mul(velocity * deltaSeconds));
-        if (gameObject.getTransform().getPosition().x() > 2.2f) {
+        Vector2f pos = gameObject.getTransform().getPosition();
+        if (pos.x() < -1.2 || pos.x() > 1.5 || pos.y() > 2 || pos.y() < -2) {
             getScene().destroyGameObject(gameObject);
         }
     }
@@ -69,6 +70,7 @@ public class Bullet extends Sprite implements TickableComponent, CollisionListen
     @Override
     public void onCollision(Collision collision) {
         if (collision.getOtherCollider().getGameObject().equals(origin)) return;
+        if (collision.getOtherCollider().getGameObject().getComponent(Bullet.class) != null) return;
         getScene().destroyGameObject(gameObject);
     }
 }

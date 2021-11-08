@@ -56,13 +56,13 @@ public class GUIComponentArea {
     }
 
     public Vector2f getStartPosition(GameView view) {
-        float x = attachToRight ? view.getFinalWidth() - offset.x() - size.x() : offset.x();
+        float x = attachToRight ? view.getGUIWidth() - offset.x() - size.x() : offset.x();
         float y = attachToBottom ? 1 - offset.y() - size.y() : offset.y();
         return new Vector2f(x, y);
     }
 
     public Area getArea(GameView view) {
         Vector2f start = getStartPosition(view);
-        return new Area(start, start.add(offset));
+        return new Area(start, start.add(size));
     }
 }

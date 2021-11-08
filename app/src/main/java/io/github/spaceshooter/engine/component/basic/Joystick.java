@@ -21,8 +21,8 @@ public class Joystick extends BasicComponent
         implements InputListenerComponent, GameStatusListenerComponent, GUIComponent {
 
     private GUIComponentArea area = new GUIComponentArea(
-            new Vector2f(0.15f, 0.15f),
-            new Vector2f(0.3f, 0.3f),
+            new Vector2f(0.1f, 0.1f),
+            new Vector2f(0.5f, 0.5f),
             true,
             false
     );
@@ -42,6 +42,10 @@ public class Joystick extends BasicComponent
 
     public Vector2f getFactor() {
         return factor;
+    }
+
+    public boolean isExecuting() {
+        return executing;
     }
 
     public GUIComponentArea getArea() {
@@ -101,8 +105,8 @@ public class Joystick extends BasicComponent
         Vector2f centerPos = pos.add(size2);
         Vector2f joyPos = centerPos.add(size2.mul(factor));
 
-        canvas.drawCircle(centerPos.x(), centerPos.y(), area.getSize().x() / 6, paint);
-        canvas.drawCircle(joyPos.x(), joyPos.y(), area.getSize().x() / 3, paint);
+        canvas.drawCircle(centerPos.x(), centerPos.y(), area.getSize().x() / 8, paint);
+        canvas.drawCircle(joyPos.x(), joyPos.y(), area.getSize().x() / 4, paint);
     }
 
     @Override

@@ -31,7 +31,7 @@ public class AsteroidGenerator extends BasicComponent implements TickableCompone
     }
 
     private void generateAsteroid() {
-        GameObject asteroidGameObject = getScene().newGameObject();
+        GameObject asteroidGameObject = getScene().newGameObject("Asteroid");
         Asteroid asteroid = asteroidGameObject.addComponent(Asteroid.class);
 
         Vector2f from = new Vector2f(1.2f, (random.nextFloat() * 2) - 1);

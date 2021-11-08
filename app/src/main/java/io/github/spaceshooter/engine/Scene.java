@@ -12,7 +12,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import io.github.spaceshooter.engine.camera.Camera;
-import io.github.spaceshooter.engine.collision.Collision;
+import io.github.spaceshooter.engine.collision.QuadTreeMap;
 import io.github.spaceshooter.engine.component.ColliderComponent;
 import io.github.spaceshooter.engine.component.Component;
 import io.github.spaceshooter.engine.component.DrawableComponent;
@@ -20,6 +20,7 @@ import io.github.spaceshooter.engine.component.GUIComponent;
 import io.github.spaceshooter.engine.component.GameStatusListenerComponent;
 import io.github.spaceshooter.engine.component.InputListenerComponent;
 import io.github.spaceshooter.engine.component.TickableComponent;
+import io.github.spaceshooter.engine.component.collision.SphereCollider;
 import io.github.spaceshooter.engine.input.InputDownEvent;
 import io.github.spaceshooter.engine.input.InputEvent;
 import io.github.spaceshooter.engine.input.InputMoveEvent;
@@ -31,7 +32,7 @@ public class Scene {
     private final Queue<Component> componentsToRemove = new LinkedList<>();
 
     private final Set<TickableComponent> tickableComponents = new HashSet<>();
-    private final Set<ColliderComponent> colliderComponents = new HashSet<>();
+    private final Set<SphereCollider> colliderComponents = new HashSet<>();
     private final Set<InputListenerComponent> inputListenerComponents = new HashSet<>();
     private final Set<GameStatusListenerComponent> gameStatusListenerComponents = new HashSet<>();
 
@@ -47,6 +48,8 @@ public class Scene {
     private int viewDirtyCount = -1;
     private final Matrix guiMatrix = new Matrix();
 
+    private final QuadTreeMap quadTreeMap = new QuadTreeMap(8, 3);
+
     private final GameEngine engine;
     private final Camera camera;
 
@@ -61,6 +64,10 @@ public class Scene {
 
     public Camera getCamera() {
         return camera;
+    }
+
+    public int getGameObjectsAmount() {
+        return gameObjects.size();
     }
 
     public GameObject newGameObject() {
@@ -126,13 +133,7 @@ public class Scene {
     void tick(float deltaSeconds) {
         flushComponentQueues();
 
-        tickableComponents.forEach(it -> {
-            if (!it.getGameObject().isEnabled()) return;
-            Lock lock = it.getGameObject().getLock();
-            lock.lock();
-            runSafe(() -> it.tick(deltaSeconds));
-            lock.unlock();
-        });
+        tickableComponents.forEach(it -> runSafeAndLocking(it, () -> it.tick(deltaSeconds)));
 
         flushComponentQueues();
 
@@ -153,57 +154,49 @@ public class Scene {
         canvas.setMatrix(viewMatrix);
         viewLock.unlock();
 
-        drawableComponents.forEach(it -> {
-            if (!it.getGameObject().isEnabled()) return;
-            Lock lock = it.getGameObject().getLock();
-            lock.lock();
+        drawableComponents.forEach(it -> runSafeAndLocking(it, () -> {
             it.getGameObject().setDrawing(true);
-            runSafe(() -> it.draw(canvas, gv));
+            it.draw(canvas, gv);
             it.getGameObject().setDrawing(false);
-            lock.unlock();
-        });
+        }));
 
         guiMatrix.reset();
         guiMatrix.postScale(gv.getFinalHeight(), gv.getFinalHeight());
         canvas.setMatrix(guiMatrix);
 
-        guiComponents.forEach(it -> {
-            if (!it.getGameObject().isEnabled()) return;
-            Lock lock = it.getGameObject().getLock();
-            lock.lock();
+        guiComponents.forEach(it -> runSafeAndLocking(it, () -> {
             it.getGameObject().setDrawing(true);
-            runSafe(() -> it.draw(canvas, gv));
+            it.draw(canvas, gv);
             it.getGameObject().setDrawing(false);
-            lock.unlock();
-        });
+        }));
     }
 
     void attach() {
-        gameStatusListenerComponents.forEach(GameStatusListenerComponent::onSceneAttach);
+        gameStatusListenerComponents.forEach(it -> runSafeAndLocking(it, it::onSceneAttach));
     }
 
     void detach() {
-        gameStatusListenerComponents.forEach(GameStatusListenerComponent::onSceneDetach);
+        gameStatusListenerComponents.forEach(it -> runSafeAndLocking(it, it::onSceneDetach));
     }
 
     void pause() {
-        gameStatusListenerComponents.forEach(GameStatusListenerComponent::onPause);
+        gameStatusListenerComponents.forEach(it -> runSafeAndLocking(it, it::onPause));
     }
 
     void resume() {
-        gameStatusListenerComponents.forEach(GameStatusListenerComponent::onResume);
+        gameStatusListenerComponents.forEach(it -> runSafeAndLocking(it, it::onResume));
     }
 
     void inputEvent(InputEvent event) {
         if (event instanceof InputDownEvent) {
-            inputListenerComponents.stream().filter(it -> it.getGameObject().isEnabled())
-                    .forEach(it -> runSafe(() -> it.onInputDown((InputDownEvent) event)));
+            inputListenerComponents.forEach(it -> runSafeAndLocking(it,
+                    () -> it.onInputDown((InputDownEvent) event)));
         } else if (event instanceof InputMoveEvent) {
-            inputListenerComponents.stream().filter(it -> it.getGameObject().isEnabled())
-                    .forEach(it -> runSafe(() -> it.onInputMove((InputMoveEvent) event)));
+            inputListenerComponents.forEach(it -> runSafeAndLocking(it,
+                    () -> it.onInputMove((InputMoveEvent) event)));
         } else if (event instanceof InputUpEvent) {
-            inputListenerComponents.stream().filter(it -> it.getGameObject().isEnabled())
-                    .forEach(it -> runSafe(() -> it.onInputUp((InputUpEvent) event)));
+            inputListenerComponents.forEach(it -> runSafeAndLocking(it,
+                    () -> it.onInputUp((InputUpEvent) event)));
         }
     }
 
@@ -228,8 +221,8 @@ public class Scene {
             drawableComponents.add((DrawableComponent) component);
         if (component instanceof GUIComponent)
             guiComponents.add((GUIComponent) component);
-        if (component instanceof ColliderComponent)
-            colliderComponents.add((ColliderComponent) component);
+        if (component instanceof SphereCollider)
+            colliderComponents.add((SphereCollider) component);
         if (component instanceof InputListenerComponent)
             inputListenerComponents.add((InputListenerComponent) component);
         if (component instanceof GameStatusListenerComponent)
@@ -240,31 +233,28 @@ public class Scene {
         if (component instanceof TickableComponent) tickableComponents.remove(component);
         if (component instanceof DrawableComponent) drawableComponents.remove(component);
         if (component instanceof GUIComponent) guiComponents.remove(component);
-        if (component instanceof ColliderComponent) colliderComponents.remove(component);
+        if (component instanceof SphereCollider) colliderComponents.remove(component);
         if (component instanceof InputListenerComponent) inputListenerComponents.remove(component);
         if (component instanceof GameStatusListenerComponent)
             gameStatusListenerComponents.remove(component);
     }
 
     private void checkCollisions() {
-        for (ColliderComponent it : colliderComponents) {
-            if (it.getGameObject().isEnabled()) {
-                colliderComponents.stream().filter(o -> o != it && o.getGameObject().isEnabled()).forEach(o -> {
-                    Collision collision = it.testCollision(o);
-                    if (collision != null) {
-                        it.getGameObject().notifyCollision(collision);
-                    }
-                });
-            }
-        }
+        quadTreeMap.calculate(colliderComponents.stream()
+                .filter(it -> it.getGameObject().isEnabled()));
+        quadTreeMap.checkCollisions();
     }
 
-    private static void runSafe(Runnable runnable) {
+    private static void runSafeAndLocking(Component c, Runnable runnable) {
+        GameObject gameObject = c.getGameObject();
+        if (!gameObject.isEnabled()) return;
+        gameObject.getLock().lock();
         try {
             runnable.run();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        gameObject.getLock().unlock();
     }
 
 }

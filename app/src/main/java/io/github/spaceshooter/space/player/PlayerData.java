@@ -23,7 +23,9 @@ public class PlayerData extends LivingComponent {
         PlayerMovementBehaviour movement = gameObject.addComponent(PlayerMovementBehaviour.class);
         movement.setJoystick(movementJoystick);
 
-        gameObject.addComponent(PlayerShootBehaviour.class);
+        PlayerShootBehaviour shoot = gameObject.addComponent(PlayerShootBehaviour.class);
+        shoot.setJoystick(shootJoystick);
+
         HealthBar bar = gameObject.addComponent(HealthBar.class);
         bar.setLivingComponent(this);
 
