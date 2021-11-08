@@ -15,7 +15,7 @@ import io.github.spaceshooter.ScaffoldActivity;
 import io.github.spaceshooter.engine.GameEngine;
 import io.github.spaceshooter.engine.Scene;
 import io.github.spaceshooter.engine.StandardGameView;
-import io.github.spaceshooter.space.room.GameScene;
+import io.github.spaceshooter.space.scene.GameScene;
 
 
 public class GameFragment extends BaseFragment implements View.OnClickListener {

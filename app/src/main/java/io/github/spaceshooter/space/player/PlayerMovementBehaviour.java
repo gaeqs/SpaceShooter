@@ -9,16 +9,24 @@ import io.github.spaceshooter.engine.math.Vector2f;
 
 public class PlayerMovementBehaviour extends BasicComponent implements TickableComponent {
 
-    private final Joystick joystick;
+    private Joystick joystick;
     private final Vector2f velocity = Vector2f.ONE;
 
     public PlayerMovementBehaviour(GameObject gameObject) {
         super(gameObject);
-        joystick = gameObject.getComponent(Joystick.class);
+    }
+
+    public Joystick getJoystick() {
+        return joystick;
+    }
+
+    public void setJoystick(Joystick joystick) {
+        this.joystick = joystick;
     }
 
     @Override
     public void tick(float deltaSeconds) {
+        if (joystick == null) return;
         Vector2f movement = joystick.getFactor().mul(velocity).mul(deltaSeconds);
 
         Vector2f start = gameObject.getTransform().getPosition();
@@ -29,7 +37,7 @@ public class PlayerMovementBehaviour extends BasicComponent implements TickableC
         if (camera.isInside(toX)) {
             start = toX;
         }
-        if(camera.isInside(toY)) {
+        if (camera.isInside(toY)) {
             start = start.add(0, movement.y());
         }
         gameObject.getTransform().setPosition(start);

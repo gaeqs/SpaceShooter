@@ -9,20 +9,25 @@ import io.github.spaceshooter.engine.component.BasicComponent;
 import io.github.spaceshooter.engine.component.GUIComponent;
 import io.github.spaceshooter.engine.component.GameStatusListenerComponent;
 import io.github.spaceshooter.engine.component.InputListenerComponent;
+import io.github.spaceshooter.engine.gui.GUIComponentArea;
 import io.github.spaceshooter.engine.input.InputDownEvent;
 import io.github.spaceshooter.engine.input.InputMoveEvent;
 import io.github.spaceshooter.engine.input.InputUpEvent;
+import io.github.spaceshooter.engine.math.Area;
 import io.github.spaceshooter.engine.math.Vector2f;
 import io.github.spaceshooter.util.Validate;
 
 public class Joystick extends BasicComponent
         implements InputListenerComponent, GameStatusListenerComponent, GUIComponent {
 
-    private Vector2f size = new Vector2f(0.3f, 0.3f);
-    private Vector2f offset = new Vector2f(0.15f, -0.15f);
+    private GUIComponentArea area = new GUIComponentArea(
+            new Vector2f(0.15f, 0.15f),
+            new Vector2f(0.3f, 0.3f),
+            true,
+            false
+    );
 
     private Vector2f factor = Vector2f.ZERO;
-
     private boolean executing;
     private int targetJoystick;
     private Vector2f startPosition;
@@ -39,22 +44,13 @@ public class Joystick extends BasicComponent
         return factor;
     }
 
-    public Vector2f getSize() {
-        return size;
+    public GUIComponentArea getArea() {
+        return area;
     }
 
-    public void setSize(Vector2f size) {
-        Validate.notNull("Size cannot be null!");
-        this.size = size;
-    }
-
-    public Vector2f getOffset() {
-        return offset;
-    }
-
-    public void setOffset(Vector2f offset) {
-        Validate.notNull("Offset cannot be null!");
-        this.offset = offset;
+    public void setArea(GUIComponentArea area) {
+        Validate.notNull(area, "Area cannot be null!");
+        this.area = area;
     }
 
     public void setColor(int color) {
@@ -65,9 +61,8 @@ public class Joystick extends BasicComponent
     public void onInputDown(InputDownEvent event) {
         if (executing) return;
 
-        Vector2f pos = event.getScreenPosition().sub(0, 1 - size.y()).sub(offset);
-
-        if (!isInside(pos)) return;
+        Area a = area.getArea(getEngine().getGameView());
+        if (!a.isInside(event.getScreenPosition())) return;
 
         startPosition = event.getScreenPosition();
         targetJoystick = event.getPointer();
@@ -81,7 +76,7 @@ public class Joystick extends BasicComponent
 
         factor = event.getScreenPosition(targetJoystick)
                 .sub(startPosition)
-                .div(size.div(2));
+                .div(area.getSize().div(2));
 
         float mag = factor.magnitudeSquared();
         if (mag > 1) {
@@ -98,14 +93,16 @@ public class Joystick extends BasicComponent
 
     @Override
     public void draw(Canvas canvas, GameView view) {
-        Vector2f pos = new Vector2f(0, 1 - size.y()).add(offset);
+        Area a = area.getArea(view);
+        Vector2f pos = a.getMin();
 
-        Vector2f size2 = size.div(2);
+
+        Vector2f size2 = area.getSize().div(2);
         Vector2f centerPos = pos.add(size2);
         Vector2f joyPos = centerPos.add(size2.mul(factor));
 
-        canvas.drawCircle(centerPos.x(), centerPos.y(), size.x() / 6, paint);
-        canvas.drawCircle(joyPos.x(), joyPos.y(), size.x() / 3, paint);
+        canvas.drawCircle(centerPos.x(), centerPos.y(), area.getSize().x() / 6, paint);
+        canvas.drawCircle(joyPos.x(), joyPos.y(), area.getSize().x() / 3, paint);
     }
 
     @Override
@@ -123,11 +120,6 @@ public class Joystick extends BasicComponent
     @Override
     public int getDrawPriority() {
         return Integer.MAX_VALUE;
-    }
-
-    private boolean isInside(Vector2f vec) {
-        return vec.x() >= 0 && vec.y() >= 0 &&
-                vec.x() <= size.x() && vec.y() <= size.y();
     }
 
 }

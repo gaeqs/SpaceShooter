@@ -7,12 +7,10 @@ import io.github.spaceshooter.engine.math.Vector2f;
 
 public class PlayerShootBehaviour extends BasicComponent {
 
-    private final Vector2f velocity = Vector2f.ONE;
-
     public PlayerShootBehaviour(GameObject gameObject) {
         super(gameObject);
         Button button = gameObject.getComponent(Button.class);
-        button.setOnRelease(this::shoot);
+        //button.setOnRelease(this::shoot);
     }
 
     private void shoot() {
@@ -21,5 +19,6 @@ public class PlayerShootBehaviour extends BasicComponent {
         bullet.setOrigin(gameObject);
         bullet.getCollider().setRadius(0.05f);
         object.getTransform().setPosition(gameObject.getTransform().getPosition());
+        playSound("shoot");
     }
 }

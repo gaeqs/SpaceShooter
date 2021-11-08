@@ -1,7 +1,6 @@
 package io.github.spaceshooter;
 
 import android.media.AudioManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
@@ -9,13 +8,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import io.github.spaceshooter.counter.GameFragment;
 import io.github.spaceshooter.counter.MainMenuFragment;
-import io.github.spaceshooter.sound.SoundManager;
 
 public class ScaffoldActivity extends AppCompatActivity {
 
     private static final String TAG_FRAGMENT = "content";
-
-    private SoundManager soundManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,11 +23,6 @@ public class ScaffoldActivity extends AppCompatActivity {
                     .commit();
         }
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        soundManager = new SoundManager(getApplicationContext());
-    }
-
-    public SoundManager getSoundManager() {
-        return soundManager;
     }
 
     public void startGame() {

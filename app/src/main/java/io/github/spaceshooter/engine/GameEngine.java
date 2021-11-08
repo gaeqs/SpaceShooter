@@ -7,6 +7,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import io.github.spaceshooter.engine.input.InputEvent;
+import io.github.spaceshooter.engine.sound.SoundManager;
 import io.github.spaceshooter.engine.thread.DrawThread;
 import io.github.spaceshooter.engine.thread.UpdateThread;
 import io.github.spaceshooter.util.Validate;
@@ -19,6 +20,8 @@ public class GameEngine {
     private final UpdateThread updateThread;
     private final DrawThread drawThread;
 
+    private final SoundManager soundManager;
+
     private final Queue<InputEvent> inputQueue = new ConcurrentLinkedQueue<>();
 
     private volatile Scene scene;
@@ -27,6 +30,8 @@ public class GameEngine {
     public GameEngine(Activity activity, GameView gameView) {
         this.activity = activity;
         this.gameView = gameView;
+
+        this.soundManager = new SoundManager(activity);
 
         this.updateThread = new UpdateThread(this);
         this.drawThread = new DrawThread(gameView, 60);
@@ -45,6 +50,10 @@ public class GameEngine {
 
     public GameView getGameView() {
         return gameView;
+    }
+
+    public SoundManager getSoundManager() {
+        return soundManager;
     }
 
     public Scene getScene() {

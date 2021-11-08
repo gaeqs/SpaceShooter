@@ -1,7 +1,9 @@
 package io.github.spaceshooter.engine.component;
 
+import io.github.spaceshooter.engine.GameEngine;
 import io.github.spaceshooter.engine.GameObject;
 import io.github.spaceshooter.engine.Scene;
+import io.github.spaceshooter.engine.sound.SoundManager;
 
 public interface Component {
 
@@ -9,11 +11,27 @@ public interface Component {
 
     GameObject getGameObject();
 
+    default void onDestroy() {
+    }
+
+    // region utils
+
     default Scene getScene() {
         return getGameObject().getScene();
     }
 
-    default void onDestroy() {
+    default GameEngine getEngine() {
+        return getGameObject().getScene().getEngine();
     }
+
+    default SoundManager getSoundManager() {
+        return getGameObject().getScene().getEngine().getSoundManager();
+    }
+
+    default void playSound(String sound) {
+        getGameObject().getScene().getEngine().getSoundManager().play(sound);
+    }
+
+    // endregion
 
 }

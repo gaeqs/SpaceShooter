@@ -2,7 +2,6 @@ package io.github.spaceshooter.space.player;
 
 import io.github.spaceshooter.R;
 import io.github.spaceshooter.engine.GameObject;
-import io.github.spaceshooter.engine.component.basic.Button;
 import io.github.spaceshooter.engine.component.basic.CollisionDebugger;
 import io.github.spaceshooter.engine.component.basic.Joystick;
 import io.github.spaceshooter.engine.component.basic.Sprite;
@@ -17,9 +16,13 @@ public class PlayerData extends LivingComponent {
     public PlayerData(GameObject gameObject) {
         super(gameObject, MAX_HEALTH);
 
-        gameObject.addComponent(Joystick.class);
-        gameObject.addComponent(Button.class);
-        gameObject.addComponent(PlayerMovementBehaviour.class);
+        Joystick movementJoystick = gameObject.addComponent(Joystick.class);
+        Joystick shootJoystick = gameObject.addComponent(Joystick.class);
+        shootJoystick.getArea().setAttachToRight(true);
+
+        PlayerMovementBehaviour movement = gameObject.addComponent(PlayerMovementBehaviour.class);
+        movement.setJoystick(movementJoystick);
+
         gameObject.addComponent(PlayerShootBehaviour.class);
         HealthBar bar = gameObject.addComponent(HealthBar.class);
         bar.setLivingComponent(this);
