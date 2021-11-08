@@ -35,4 +35,9 @@ public class PlayerData extends LivingComponent {
     protected void onDeath() {
         getScene().destroyGameObject(gameObject);
     }
+
+    @Override
+    protected void onHealthChange(int health) {
+
+    }
 }

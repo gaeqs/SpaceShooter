@@ -24,9 +24,16 @@ public abstract class LivingComponent extends BasicComponent {
         return maxHealth;
     }
 
+    public boolean isDead() {
+        return health == 0;
+    }
+
     public void setMaxHealth(int maxHealth) {
-        this.maxHealth = Math.max(0, maxHealth);
-        this.health = Math.max(maxHealth, health);
+        maxHealth = Math.max(0, maxHealth);
+        int nextHealth = Math.max(maxHealth, health);
+        if (nextHealth == health) return;
+        health = nextHealth;
+        onHealthChange(nextHealth);
         if (health == 0) {
             onDeath();
         }
@@ -37,10 +44,14 @@ public abstract class LivingComponent extends BasicComponent {
     }
 
     public void heal(int heal) {
+        if (heal == 0 || isDead()) return;
         health = Math.max(0, Math.min(health + heal, maxHealth));
-        if (health <= 0) onDeath();
+        onHealthChange(health);
+        if (health == 0) onDeath();
     }
 
     protected abstract void onDeath();
+
+    protected abstract void onHealthChange(int health);
 
 }

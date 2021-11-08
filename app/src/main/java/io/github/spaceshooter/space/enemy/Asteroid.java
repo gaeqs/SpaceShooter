@@ -1,5 +1,7 @@
 package io.github.spaceshooter.space.enemy;
 
+import java.util.Random;
+
 import io.github.spaceshooter.R;
 import io.github.spaceshooter.engine.GameObject;
 import io.github.spaceshooter.engine.collision.Collision;
@@ -17,16 +19,21 @@ import io.github.spaceshooter.util.Validate;
 public class Asteroid extends LivingComponent implements TickableComponent, CollisionListenerComponent {
 
     public static final int MAX_HEALTH = 20;
+    private static final Random ROTATION_RANDOM = new Random();
+
+    private final Sprite sprite;
 
     private Vector2f direction = new Vector2f(-1, 0);
     private float velocity = 0.5f;
     private int inflictedDamage = 20;
 
+    private float angularVelocity = ROTATION_RANDOM.nextFloat() * 360 - 180;
+
     public Asteroid(GameObject gameObject) {
         super(gameObject, MAX_HEALTH);
 
-        Sprite sprite = gameObject.addComponent(Sprite.class);
-        sprite.setBitmap(R.drawable.a10000);
+        sprite = gameObject.addComponent(Sprite.class);
+        sprite.setBitmap(R.drawable.asteroid);
         sprite.setSpriteScale(new Vector2f(0.2f, 0.2f));
 
         SphereCollider collider = gameObject.addComponent(SphereCollider.class);
@@ -51,6 +58,14 @@ public class Asteroid extends LivingComponent implements TickableComponent, Coll
         this.velocity = velocity;
     }
 
+    public float getAngularVelocity() {
+        return angularVelocity;
+    }
+
+    public void setAngularVelocity(float angularVelocity) {
+        this.angularVelocity = angularVelocity;
+    }
+
     public int getInflictedDamage() {
         return inflictedDamage;
     }
@@ -62,9 +77,10 @@ public class Asteroid extends LivingComponent implements TickableComponent, Coll
     @Override
     public void tick(float deltaSeconds) {
         gameObject.getTransform().move(direction.mul(velocity * deltaSeconds));
+        gameObject.getTransform().rotate(angularVelocity * deltaSeconds);
 
         Vector2f pos = gameObject.getTransform().getPosition();
-        if (pos.x() < -5 || pos.y() > 2 || pos.y() < -2) {
+        if (pos.x() < -1.2 || pos.x() > 1.5 || pos.y() > 2 || pos.y() < -2) {
             gameObject.getScene().destroyGameObject(gameObject);
         }
     }
@@ -78,7 +94,10 @@ public class Asteroid extends LivingComponent implements TickableComponent, Coll
         }
 
         if (o.getComponent(Asteroid.class) != null) {
-            damage(getMaxHealth());
+            damage(10);
+            if (!isDead()) {
+                direction = collision.getOtherNormal();
+            }
             return;
         }
 
@@ -86,7 +105,7 @@ public class Asteroid extends LivingComponent implements TickableComponent, Coll
         if (data != null) {
             getScene().destroyGameObject(gameObject);
             damage(getMaxHealth());
-            data.damage(20);
+            data.damage(inflictedDamage);
         }
 
     }
@@ -94,5 +113,10 @@ public class Asteroid extends LivingComponent implements TickableComponent, Coll
     @Override
     protected void onDeath() {
         getScene().destroyGameObject(gameObject);
+    }
+
+    @Override
+    protected void onHealthChange(int health) {
+        sprite.setBitmap(health > 10 ? R.drawable.asteroid : R.drawable.damaged_asteroid);
     }
 }
