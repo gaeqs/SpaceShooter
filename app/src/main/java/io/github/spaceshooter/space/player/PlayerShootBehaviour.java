@@ -3,9 +3,9 @@ package io.github.spaceshooter.space.player;
 import io.github.spaceshooter.engine.GameObject;
 import io.github.spaceshooter.engine.component.BasicComponent;
 import io.github.spaceshooter.engine.component.TickableComponent;
-import io.github.spaceshooter.engine.component.basic.Button;
 import io.github.spaceshooter.engine.component.basic.Joystick;
 import io.github.spaceshooter.engine.math.Vector2f;
+import io.github.spaceshooter.space.general.Bullet;
 
 public class PlayerShootBehaviour extends BasicComponent implements TickableComponent {
 

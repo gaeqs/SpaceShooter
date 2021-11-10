@@ -1,4 +1,4 @@
-package io.github.spaceshooter.space.player;
+package io.github.spaceshooter.space.general;
 
 import io.github.spaceshooter.R;
 import io.github.spaceshooter.engine.GameObject;
@@ -18,6 +18,7 @@ public class Bullet extends Sprite implements TickableComponent, CollisionListen
 
     private Vector2f direction = new Vector2f(1, 0);
     private float velocity = 1;
+    private int damage = 5;
 
 
     public Bullet(GameObject gameObject) {
@@ -25,7 +26,6 @@ public class Bullet extends Sprite implements TickableComponent, CollisionListen
         setBitmap(R.drawable.bullet);
         collider = gameObject.addComponent(SphereCollider.class);
         collider.setRadius(0.025f);
-        gameObject.addComponent(CollisionDebugger.class);
     }
 
     public SphereCollider getCollider() {
@@ -58,6 +58,14 @@ public class Bullet extends Sprite implements TickableComponent, CollisionListen
         this.velocity = velocity;
     }
 
+    public int getDamage() {
+        return damage;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
+    }
+
     @Override
     public void tick(float deltaSeconds) {
         gameObject.getTransform().move(direction.mul(velocity * deltaSeconds));
@@ -72,5 +80,7 @@ public class Bullet extends Sprite implements TickableComponent, CollisionListen
         if (collision.getOtherCollider().getGameObject().equals(origin)) return;
         if (collision.getOtherCollider().getGameObject().getComponent(Bullet.class) != null) return;
         getScene().destroyGameObject(gameObject);
+        collision.getOtherCollider().getGameObject().getAllComponents(LivingComponent.class)
+                .forEach(it -> it.damage(damage));
     }
 }

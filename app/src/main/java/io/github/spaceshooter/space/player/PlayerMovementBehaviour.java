@@ -6,41 +6,62 @@ import io.github.spaceshooter.engine.component.BasicComponent;
 import io.github.spaceshooter.engine.component.TickableComponent;
 import io.github.spaceshooter.engine.component.basic.Joystick;
 import io.github.spaceshooter.engine.math.Vector2f;
+import io.github.spaceshooter.space.background.PlayArea;
 
 public class PlayerMovementBehaviour extends BasicComponent implements TickableComponent {
 
-    private Joystick joystick;
+    private Joystick movementJoystick;
+    private Joystick shootJoystick;
     private final Vector2f velocity = Vector2f.ONE;
 
     public PlayerMovementBehaviour(GameObject gameObject) {
         super(gameObject);
     }
 
-    public Joystick getJoystick() {
-        return joystick;
+    public Joystick getMovementJoystick() {
+        return movementJoystick;
     }
 
-    public void setJoystick(Joystick joystick) {
-        this.joystick = joystick;
+    public void setMovementJoystick(Joystick movementJoystick) {
+        this.movementJoystick = movementJoystick;
+    }
+
+    public Joystick getShootJoystick() {
+        return shootJoystick;
+    }
+
+    public void setShootJoystick(Joystick shootJoystick) {
+        this.shootJoystick = shootJoystick;
     }
 
     @Override
     public void tick(float deltaSeconds) {
-        if (joystick == null) return;
-        Vector2f movement = joystick.getFactor().mul(velocity).mul(deltaSeconds);
+        rotate();
+        if (movementJoystick == null) return;
+
+        Vector2f movement = movementJoystick.getFactor().mul(velocity).mul(deltaSeconds);
 
         Vector2f start = gameObject.getTransform().getPosition();
         Vector2f toX = start.add(movement.x(), 0);
         Vector2f toY = start.add(0, movement.y());
 
         Camera camera = gameObject.getScene().getCamera();
-        if (camera.isInside(toX)) {
+        if (PlayArea.PLAY_AREA.contains(toX.x(), toX.y())) {
             start = toX;
         }
-        if (camera.isInside(toY)) {
+        if (PlayArea.PLAY_AREA.contains(toY.x(), toY.y())) {
             start = start.add(0, movement.y());
         }
         gameObject.getTransform().setPosition(start);
+        camera.setPosition(start);
+    }
 
+    private void rotate() {
+        if (shootJoystick == null) return;
+        Vector2f lookAt = shootJoystick.getFactor();
+        if(lookAt.magnitudeSquared() == 0) return;
+        float rotation = (float) Math.atan2(lookAt.y(), lookAt.x());
+        System.out.println(rotation);
+        gameObject.getTransform().setRotation(rotation * 180 / (float) Math.PI + 90);
     }
 }

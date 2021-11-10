@@ -21,7 +21,8 @@ public class PlayerData extends LivingComponent {
         shootJoystick.getArea().setAttachToRight(true);
 
         PlayerMovementBehaviour movement = gameObject.addComponent(PlayerMovementBehaviour.class);
-        movement.setJoystick(movementJoystick);
+        movement.setMovementJoystick(movementJoystick);
+        movement.setShootJoystick(shootJoystick);
 
         PlayerShootBehaviour shoot = gameObject.addComponent(PlayerShootBehaviour.class);
         shoot.setJoystick(shootJoystick);
@@ -33,7 +34,6 @@ public class PlayerData extends LivingComponent {
         sprite.setBitmap(R.drawable.ship);
         SphereCollider collider = gameObject.addComponent(SphereCollider.class);
         collider.setRadius(0.05f);
-        gameObject.addComponent(CollisionDebugger.class);
     }
 
     @Override

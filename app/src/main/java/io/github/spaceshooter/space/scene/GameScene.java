@@ -7,6 +7,8 @@ import io.github.spaceshooter.engine.camera.CameraScreenMode;
 import io.github.spaceshooter.engine.component.basic.FPSViewer;
 import io.github.spaceshooter.engine.math.Vector2f;
 import io.github.spaceshooter.engine.sound.SoundManager;
+import io.github.spaceshooter.space.background.Background;
+import io.github.spaceshooter.space.background.PlayArea;
 import io.github.spaceshooter.space.enemy.AsteroidGenerator;
 import io.github.spaceshooter.space.player.PlayerData;
 
@@ -25,6 +27,7 @@ public class GameScene extends Scene {
 
         initPlayer();
         initAsteroidGenerator();
+        initBackground();
     }
 
     private void registerSounds() {
@@ -41,5 +44,11 @@ public class GameScene extends Scene {
     private void initAsteroidGenerator() {
         GameObject asteroidGenerator = newGameObject("Asteroid generator");
         asteroidGenerator.addComponent(AsteroidGenerator.class);
+    }
+
+    private void initBackground() {
+        GameObject background = newGameObject("Background");
+        background.addComponent(PlayArea.class);
+        background.addComponent(Background.class);
     }
 }

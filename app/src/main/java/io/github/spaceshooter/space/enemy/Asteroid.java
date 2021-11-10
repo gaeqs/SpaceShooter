@@ -11,8 +11,8 @@ import io.github.spaceshooter.engine.component.basic.CollisionDebugger;
 import io.github.spaceshooter.engine.component.basic.Sprite;
 import io.github.spaceshooter.engine.component.collision.SphereCollider;
 import io.github.spaceshooter.engine.math.Vector2f;
+import io.github.spaceshooter.space.background.PlayArea;
 import io.github.spaceshooter.space.general.LivingComponent;
-import io.github.spaceshooter.space.player.Bullet;
 import io.github.spaceshooter.space.player.PlayerData;
 import io.github.spaceshooter.util.Validate;
 
@@ -38,7 +38,6 @@ public class Asteroid extends LivingComponent implements TickableComponent, Coll
 
         SphereCollider collider = gameObject.addComponent(SphereCollider.class);
         collider.setRadius(0.05f);
-        gameObject.addComponent(CollisionDebugger.class);
     }
 
     public Vector2f getDirection() {
@@ -80,7 +79,7 @@ public class Asteroid extends LivingComponent implements TickableComponent, Coll
         gameObject.getTransform().rotate(angularVelocity * deltaSeconds);
 
         Vector2f pos = gameObject.getTransform().getPosition();
-        if (pos.x() < -1.2 || pos.x() > 1.5 || pos.y() > 2 || pos.y() < -2) {
+        if (!PlayArea.DESPAWN_AREA.contains(pos.x(), pos.y())) {
             gameObject.getScene().destroyGameObject(gameObject);
         }
     }
@@ -88,10 +87,6 @@ public class Asteroid extends LivingComponent implements TickableComponent, Coll
     @Override
     public void onCollision(Collision collision) {
         GameObject o = collision.getOtherCollider().getGameObject();
-
-        if (o.getComponent(Bullet.class) != null) {
-            damage(10);
-        }
 
         if (o.getComponent(Asteroid.class) != null) {
             damage(10);

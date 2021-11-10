@@ -6,6 +6,7 @@ import io.github.spaceshooter.engine.GameObject;
 import io.github.spaceshooter.engine.component.BasicComponent;
 import io.github.spaceshooter.engine.component.TickableComponent;
 import io.github.spaceshooter.engine.math.Vector2f;
+import io.github.spaceshooter.space.background.PlayArea;
 
 public class AsteroidGenerator extends BasicComponent implements TickableComponent {
 
@@ -34,11 +35,23 @@ public class AsteroidGenerator extends BasicComponent implements TickableCompone
         GameObject asteroidGameObject = getScene().newGameObject("Asteroid");
         Asteroid asteroid = asteroidGameObject.addComponent(Asteroid.class);
 
-        Vector2f from = new Vector2f(1.2f, (random.nextFloat() * 2) - 1);
-        float toY = -from.y() * 0.5f + ((random.nextFloat() * 2) - 1) * 0.5f;
-        Vector2f to = new Vector2f(-1, toY);
-
+        Vector2f from = generateOrigin();
+        Vector2f to = new Vector2f(random.nextFloat() - 0.5f, random.nextFloat() - 0.5f);
         asteroidGameObject.getTransform().setPosition(from);
         asteroid.setDirection(to.sub(from).normalized());
+    }
+
+    private Vector2f generateOrigin() {
+        float x, y;
+        if (random.nextBoolean()) {
+            x = random.nextBoolean() ? PlayArea.DESPAWN_AREA.left : PlayArea.DESPAWN_AREA.right;
+            float p = random.nextFloat();
+            y = p * PlayArea.DESPAWN_AREA.top + p * PlayArea.DESPAWN_AREA.bottom;
+        } else {
+            y = random.nextBoolean() ? PlayArea.DESPAWN_AREA.bottom : PlayArea.DESPAWN_AREA.top;
+            float p = random.nextFloat();
+            x = p * PlayArea.DESPAWN_AREA.bottom + p * PlayArea.DESPAWN_AREA.top;
+        }
+        return new Vector2f(x, y);
     }
 }
