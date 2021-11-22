@@ -32,8 +32,8 @@ public interface GameView {
         return getHeight() - getPaddingTop() - getPaddingBottom();
     }
 
-    default int getGUIWidth() {
-        return getFinalWidth() / getFinalHeight();
+    default float getGUIWidth() {
+        return getFinalWidth() / (float) getFinalHeight();
     }
 
     default Vector2f screenToGUI(Vector2f vec) {

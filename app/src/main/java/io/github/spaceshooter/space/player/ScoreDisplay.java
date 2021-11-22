@@ -1,27 +1,19 @@
 package io.github.spaceshooter.space.player;
 
-import android.graphics.Canvas;
-import android.graphics.Paint;
-
 import io.github.spaceshooter.engine.GameObject;
-import io.github.spaceshooter.engine.GameView;
 import io.github.spaceshooter.engine.component.BasicComponent;
-import io.github.spaceshooter.engine.component.GUIComponent;
 import io.github.spaceshooter.engine.component.TickableComponent;
-import io.github.spaceshooter.util.TextUtils;
+import io.github.spaceshooter.engine.component.basic.Text;
 
-public class ScoreDisplay extends BasicComponent implements GUIComponent, TickableComponent {
+public class ScoreDisplay extends BasicComponent implements TickableComponent {
 
-    private final Paint paint;
+    private final Text text;
+
     private PlayerStats stats;
-    private volatile int score;
 
     public ScoreDisplay(GameObject gameObject) {
         super(gameObject);
-        paint = new Paint();
-        paint.setColor(0);
-        paint.setAlpha(255);
-        paint.setTextSize(0.05f);
+        text = gameObject.getComponent(Text.class);
     }
 
     public PlayerStats getStats() {
@@ -34,18 +26,8 @@ public class ScoreDisplay extends BasicComponent implements GUIComponent, Tickab
 
     @Override
     public void tick(float deltaSeconds) {
-        score = stats == null ? 0 : stats.score;
+        int score = stats == null ? 0 : stats.score;
+        text.setText(String.valueOf(score));
     }
 
-    @Override
-    public void draw(Canvas canvas, GameView view) {
-        String text = String.valueOf(score);
-        TextUtils.drawKernedText(canvas, text, 0.2f, 0.9f, paint);
-
-    }
-
-    @Override
-    public int getDrawPriority() {
-        return Integer.MAX_VALUE;
-    }
 }

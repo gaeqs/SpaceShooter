@@ -9,20 +9,27 @@ import io.github.spaceshooter.engine.component.BasicComponent;
 import io.github.spaceshooter.engine.component.GUIComponent;
 import io.github.spaceshooter.engine.component.GameStatusListenerComponent;
 import io.github.spaceshooter.engine.component.InputListenerComponent;
+import io.github.spaceshooter.engine.gui.GUIComponentArea;
 import io.github.spaceshooter.engine.input.InputDownEvent;
 import io.github.spaceshooter.engine.input.InputMoveEvent;
 import io.github.spaceshooter.engine.input.InputUpEvent;
+import io.github.spaceshooter.engine.math.Area;
 import io.github.spaceshooter.engine.math.Vector2f;
 import io.github.spaceshooter.util.Validate;
 
 public class Button extends BasicComponent
         implements InputListenerComponent, GameStatusListenerComponent, GUIComponent {
 
-    private Vector2f size = new Vector2f(0.3f, 0.3f);
-    private Vector2f offset = new Vector2f(-0.15f, -0.15f);
+    private GUIComponentArea area = new GUIComponentArea(
+            new Vector2f(0.1f, 0.1f),
+            new Vector2f(0.5f, 0.5f),
+            true,
+            false
+    );
 
-    private boolean pressed;
-    private int targetJoystick;
+    private boolean executing;
+    private int targetPoint;
+
     private final Paint paint;
 
     private Runnable onPress, onRelease;
@@ -33,31 +40,34 @@ public class Button extends BasicComponent
         paint.setColor(0x77777777);
     }
 
-    public Vector2f getSize() {
-        return size;
+    public boolean isExecuting() {
+        return executing;
     }
 
-    public void setSize(Vector2f size) {
-        Validate.notNull("Size cannot be null!");
-        this.size = size;
+    public GUIComponentArea getArea() {
+        return area;
     }
 
-    public Vector2f getOffset() {
-        return offset;
+    public void setArea(GUIComponentArea area) {
+        Validate.notNull(area, "Area cannot be null!");
+        this.area = area;
     }
 
-    public void setOffset(Vector2f offset) {
-        Validate.notNull("Offset cannot be null!");
-        this.offset = offset;
+
+    public Paint getPaint() {
+        return paint;
     }
 
-    public void setColor(int color) {
-        paint.setColor(color);
+    public Runnable getOnPress() {
+        return onPress;
     }
-
 
     public void setOnPress(Runnable onPress) {
         this.onPress = onPress;
+    }
+
+    public Runnable getOnRelease() {
+        return onRelease;
     }
 
     public void setOnRelease(Runnable onRelease) {
@@ -66,18 +76,19 @@ public class Button extends BasicComponent
 
     @Override
     public void onInputDown(InputDownEvent event) {
-        if (pressed) return;
+        if (executing) return;
 
-        float w = getScene().getEngine().getGameView().getGUIWidth();
-        Vector2f pos = event.getScreenPosition().sub(w - size.x(), 1 - size.y()).sub(offset);
+        Area a = area.getArea(getEngine().getGameView());
+        if (!a.isInside(event.getScreenPosition())) return;
 
-        if (!isInside(pos)) return;
+        targetPoint = event.getPointer();
 
-        targetJoystick = event.getPointer();
-        pressed = true;
+
         if (onPress != null) {
             onPress.run();
         }
+
+        executing = true;
     }
 
     @Override
@@ -86,39 +97,48 @@ public class Button extends BasicComponent
 
     @Override
     public void onInputUp(InputUpEvent event) {
-        if (!pressed || event.getPointer() != targetJoystick) return;
-        pressed = false;
+        if (!executing || event.getPointer() != targetPoint) return;
         if (onRelease != null) {
             onRelease.run();
         }
+        executing = false;
     }
 
     @Override
     public void draw(Canvas canvas, GameView view) {
-        float w = view.getGUIWidth();
-        Vector2f pos = new Vector2f(w - size.x(), 1 - size.y()).add(offset);
-        Vector2f centerPos = pos.add(size.div(2));
-        canvas.drawCircle(centerPos.x(), centerPos.y(), size.x() / 3, paint);
+        Area a = area.getArea(view);
+        Vector2f pos = a.getMin();
+        Vector2f size2 = area.getSize().div(2);
+        Vector2f centerPos = pos.add(size2);
+
+        float radius = Math.min(area.getSize().x(), area.getSize().y()) / 2;
+
+        canvas.drawCircle(centerPos.x(), centerPos.y(), radius, paint);
     }
 
     @Override
     public void onSceneDetach() {
-        pressed = false;
+        if (executing) {
+            if (onRelease != null) {
+                onRelease.run();
+            }
+        }
+        executing = false;
     }
 
     @Override
     public void onPause() {
-        pressed = false;
+        if (executing) {
+            if (onRelease != null) {
+                onRelease.run();
+            }
+        }
+        executing = false;
     }
 
     @Override
     public int getDrawPriority() {
         return Integer.MAX_VALUE;
-    }
-
-    private boolean isInside(Vector2f vec) {
-        return vec.x() >= 0 && vec.y() >= 0 &&
-                vec.x() <= size.x() && vec.y() <= size.y();
     }
 
 }

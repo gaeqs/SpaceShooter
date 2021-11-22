@@ -6,7 +6,9 @@ import io.github.spaceshooter.engine.collision.Collision;
 import io.github.spaceshooter.engine.component.CollisionListenerComponent;
 import io.github.spaceshooter.engine.component.basic.Joystick;
 import io.github.spaceshooter.engine.component.basic.Sprite;
+import io.github.spaceshooter.engine.component.basic.Text;
 import io.github.spaceshooter.engine.component.collision.SphereCollider;
+import io.github.spaceshooter.engine.math.Vector2f;
 import io.github.spaceshooter.space.general.HealthBar;
 import io.github.spaceshooter.space.general.LivingComponent;
 import io.github.spaceshooter.space.util.DamageInflicter;
@@ -34,6 +36,8 @@ public class PlayerData extends LivingComponent implements CollisionListenerComp
 
         HealthBar bar = gameObject.addComponent(HealthBar.class);
         bar.setLivingComponent(this);
+
+        gameObject.addComponent(Text.class).setPosition(new Vector2f(0.2f, 0.9f));
         ScoreDisplay scoreDisplay = gameObject.addComponent(ScoreDisplay.class);
         scoreDisplay.setStats(stats);
 

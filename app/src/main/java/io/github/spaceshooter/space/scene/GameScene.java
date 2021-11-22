@@ -4,7 +4,10 @@ import io.github.spaceshooter.engine.GameEngine;
 import io.github.spaceshooter.engine.GameObject;
 import io.github.spaceshooter.engine.Scene;
 import io.github.spaceshooter.engine.camera.CameraScreenMode;
+import io.github.spaceshooter.engine.component.basic.Button;
 import io.github.spaceshooter.engine.component.basic.FPSViewer;
+import io.github.spaceshooter.engine.component.basic.Text;
+import io.github.spaceshooter.engine.gui.GUIComponentArea;
 import io.github.spaceshooter.engine.math.Vector2f;
 import io.github.spaceshooter.engine.sound.SoundManager;
 import io.github.spaceshooter.space.background.Background;
@@ -24,6 +27,7 @@ public class GameScene extends Scene {
         getCamera().setSize(new Vector2f(2, 2));
 
         GameObject fpsViewer = newGameObject("FPS");
+        fpsViewer.addComponent(Text.class).setPosition(new Vector2f(1, 0.9f));
         fpsViewer.addComponent(FPSViewer.class);
 
         GameObject roundManager = newGameObject("Round Manager");
@@ -32,6 +36,7 @@ public class GameScene extends Scene {
         initPlayer();
         initAsteroidGenerator();
         initBackground();
+        initPauseButton();
     }
 
     private void registerSounds() {
@@ -54,5 +59,13 @@ public class GameScene extends Scene {
         GameObject background = newGameObject("Background");
         background.addComponent(PlayArea.class);
         background.addComponent(Background.class);
+    }
+
+    private void initPauseButton() {
+        GameObject pause = newGameObject("Pause button");
+        Button button = pause.addComponent(Button.class);
+        button.setArea(new GUIComponentArea(Vector2f.ZERO,
+                new Vector2f(0.2f, 0.2f), false, true));
+        button.setOnPress(() -> getEngine().setScene(new PauseScene(getEngine(), this)));
     }
 }
