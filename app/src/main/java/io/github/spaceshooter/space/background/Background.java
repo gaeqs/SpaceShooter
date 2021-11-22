@@ -19,7 +19,7 @@ public class Background extends BasicComponent implements DrawableComponent, Tic
     private final RectF RECT_INNER_TEMP = new RectF();
     private final RectF RECT_INNER = new RectF();
 
-    private Vector2f center;
+    private volatile Vector2f center;
 
     public Background(GameObject gameObject) {
         super(gameObject);
@@ -32,6 +32,7 @@ public class Background extends BasicComponent implements DrawableComponent, Tic
 
     @Override
     public void draw(Canvas canvas, GameView view) {
+        if (center == null) return;
         PAINT.setColor(0xFF555555);
         RECT_INNER.set(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY,
                 Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);

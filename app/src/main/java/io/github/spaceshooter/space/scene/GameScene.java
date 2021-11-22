@@ -11,6 +11,7 @@ import io.github.spaceshooter.space.background.Background;
 import io.github.spaceshooter.space.background.PlayArea;
 import io.github.spaceshooter.space.enemy.AsteroidGenerator;
 import io.github.spaceshooter.space.player.PlayerData;
+import io.github.spaceshooter.space.round.RoundManager;
 
 public class GameScene extends Scene {
 
@@ -24,6 +25,9 @@ public class GameScene extends Scene {
 
         GameObject fpsViewer = newGameObject("FPS");
         fpsViewer.addComponent(FPSViewer.class);
+
+        GameObject roundManager = newGameObject("Round Manager");
+        roundManager.addComponent(RoundManager.class);
 
         initPlayer();
         initAsteroidGenerator();

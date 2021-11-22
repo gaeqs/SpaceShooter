@@ -44,6 +44,12 @@ public class Transform {
         this.position = position.add(offset);
     }
 
+    public void lookAt(Vector2f direction) {
+        if (direction.magnitudeSquared() == 0) return;
+        float rotation = (float) Math.atan2(direction.y(), direction.x());
+        setRotation(rotation * 180 / (float) Math.PI + 90);
+    }
+
     public void move(float x, float y) {
         this.position = position.add(x, y);
     }

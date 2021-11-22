@@ -2,14 +2,15 @@ package io.github.spaceshooter.space.player;
 
 import io.github.spaceshooter.R;
 import io.github.spaceshooter.engine.GameObject;
-import io.github.spaceshooter.engine.component.basic.CollisionDebugger;
+import io.github.spaceshooter.engine.collision.Collision;
+import io.github.spaceshooter.engine.component.CollisionListenerComponent;
 import io.github.spaceshooter.engine.component.basic.Joystick;
 import io.github.spaceshooter.engine.component.basic.Sprite;
 import io.github.spaceshooter.engine.component.collision.SphereCollider;
 import io.github.spaceshooter.space.general.HealthBar;
 import io.github.spaceshooter.space.general.LivingComponent;
 
-public class PlayerData extends LivingComponent {
+public class PlayerData extends LivingComponent implements CollisionListenerComponent, DamageInflicter {
 
     public static final int MAX_HEALTH = 100;
 
@@ -44,5 +45,19 @@ public class PlayerData extends LivingComponent {
     @Override
     protected void onHealthChange(int health) {
 
+    }
+
+    @Override
+    public void onCollision(Collision collision) {
+        GameObject o = collision.getOtherCollider().getGameObject();
+        LivingComponent living = o.getComponent(LivingComponent.class);
+        if (living != null) {
+            living.damage(getInflictedDamage(living));
+        }
+    }
+
+    @Override
+    public int getInflictedDamage(LivingComponent livingComponent) {
+        return livingComponent.getMaxHealth();
     }
 }

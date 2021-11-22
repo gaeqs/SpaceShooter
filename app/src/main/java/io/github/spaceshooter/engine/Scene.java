@@ -6,6 +6,7 @@ import android.graphics.Matrix;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.locks.Lock;
@@ -25,6 +26,7 @@ import io.github.spaceshooter.engine.input.InputDownEvent;
 import io.github.spaceshooter.engine.input.InputEvent;
 import io.github.spaceshooter.engine.input.InputMoveEvent;
 import io.github.spaceshooter.engine.input.InputUpEvent;
+import io.github.spaceshooter.engine.scheduler.Scheduler;
 
 public class Scene {
 
@@ -49,9 +51,12 @@ public class Scene {
     private final Matrix guiMatrix = new Matrix();
 
     private final QuadTreeMap quadTreeMap = new QuadTreeMap(8, 3);
+    private final Scheduler scheduler = new Scheduler();
+    private final Random random = new Random();
 
     private final GameEngine engine;
     private final Camera camera;
+
 
     public Scene(GameEngine engine) {
         this.engine = engine;
@@ -64,6 +69,10 @@ public class Scene {
 
     public Camera getCamera() {
         return camera;
+    }
+
+    public Random getRandom() {
+        return random;
     }
 
     public int getGameObjectsAmount() {
@@ -130,7 +139,13 @@ public class Scene {
         return null;
     }
 
+    public void runAfter(Component owner, float seconds, Runnable runnable) {
+        scheduler.runAfter(owner, seconds, runnable);
+    }
+
     void tick(float deltaSeconds) {
+        scheduler.tick(deltaSeconds);
+
         flushComponentQueues();
 
         tickableComponents.forEach(it -> runSafeAndLocking(it, () -> it.tick(deltaSeconds)));

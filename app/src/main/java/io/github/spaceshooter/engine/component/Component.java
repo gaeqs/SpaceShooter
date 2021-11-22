@@ -1,5 +1,7 @@
 package io.github.spaceshooter.engine.component;
 
+import java.util.Random;
+
 import io.github.spaceshooter.engine.GameEngine;
 import io.github.spaceshooter.engine.GameObject;
 import io.github.spaceshooter.engine.Scene;
@@ -30,6 +32,14 @@ public interface Component {
 
     default void playSound(String sound) {
         getGameObject().getScene().getEngine().getSoundManager().play(sound);
+    }
+
+    default void runLater(float seconds, Runnable runnable) {
+        getGameObject().getScene().runAfter(this, seconds, runnable);
+    }
+
+    default Random getRandom() {
+        return getGameObject().getScene().getRandom();
     }
 
     // endregion

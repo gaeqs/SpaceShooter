@@ -6,11 +6,10 @@ import io.github.spaceshooter.engine.GameObject;
 import io.github.spaceshooter.engine.component.BasicComponent;
 import io.github.spaceshooter.engine.component.TickableComponent;
 import io.github.spaceshooter.engine.math.Vector2f;
-import io.github.spaceshooter.space.background.PlayArea;
+import io.github.spaceshooter.space.util.GenerationUtils;
 
 public class AsteroidGenerator extends BasicComponent implements TickableComponent {
 
-    private final Random random = new Random();
     private float seconds;
     private float nextAsteroidTime;
 
@@ -27,31 +26,18 @@ public class AsteroidGenerator extends BasicComponent implements TickableCompone
             generateAsteroid();
 
             seconds = 0;
-            nextAsteroidTime = random.nextFloat() * 0.5f + 0.5f;
+            nextAsteroidTime = getRandom().nextFloat() * 0.5f + 0.5f;
         }
     }
 
     private void generateAsteroid() {
+        Random random = getRandom();
         GameObject asteroidGameObject = getScene().newGameObject("Asteroid");
         Asteroid asteroid = asteroidGameObject.addComponent(Asteroid.class);
 
-        Vector2f from = generateOrigin();
+        Vector2f from = GenerationUtils.generateOrigin(random);
         Vector2f to = new Vector2f(random.nextFloat() - 0.5f, random.nextFloat() - 0.5f);
         asteroidGameObject.getTransform().setPosition(from);
         asteroid.setDirection(to.sub(from).normalized());
-    }
-
-    private Vector2f generateOrigin() {
-        float x, y;
-        if (random.nextBoolean()) {
-            x = random.nextBoolean() ? PlayArea.DESPAWN_AREA.left : PlayArea.DESPAWN_AREA.right;
-            float p = random.nextFloat();
-            y = p * PlayArea.DESPAWN_AREA.top + p * PlayArea.DESPAWN_AREA.bottom;
-        } else {
-            y = random.nextBoolean() ? PlayArea.DESPAWN_AREA.bottom : PlayArea.DESPAWN_AREA.top;
-            float p = random.nextFloat();
-            x = p * PlayArea.DESPAWN_AREA.bottom + p * PlayArea.DESPAWN_AREA.top;
-        }
-        return new Vector2f(x, y);
     }
 }

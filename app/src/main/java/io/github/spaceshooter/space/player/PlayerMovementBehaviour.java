@@ -58,10 +58,6 @@ public class PlayerMovementBehaviour extends BasicComponent implements TickableC
 
     private void rotate() {
         if (shootJoystick == null) return;
-        Vector2f lookAt = shootJoystick.getFactor();
-        if(lookAt.magnitudeSquared() == 0) return;
-        float rotation = (float) Math.atan2(lookAt.y(), lookAt.x());
-        System.out.println(rotation);
-        gameObject.getTransform().setRotation(rotation * 180 / (float) Math.PI + 90);
+        gameObject.getTransform().lookAt(shootJoystick.getFactor());
     }
 }
