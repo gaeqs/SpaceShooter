@@ -9,7 +9,7 @@ import io.github.spaceshooter.engine.math.Vector2f;
 import io.github.spaceshooter.engine.sound.SoundManager;
 import io.github.spaceshooter.space.background.Background;
 import io.github.spaceshooter.space.background.PlayArea;
-import io.github.spaceshooter.space.enemy.AsteroidGenerator;
+import io.github.spaceshooter.space.enemy.PasiveElementsGenerator;
 import io.github.spaceshooter.space.player.PlayerData;
 import io.github.spaceshooter.space.round.RoundManager;
 
@@ -47,7 +47,7 @@ public class GameScene extends Scene {
 
     private void initAsteroidGenerator() {
         GameObject asteroidGenerator = newGameObject("Asteroid generator");
-        asteroidGenerator.addComponent(AsteroidGenerator.class);
+        asteroidGenerator.addComponent(PasiveElementsGenerator.class);
     }
 
     private void initBackground() {
