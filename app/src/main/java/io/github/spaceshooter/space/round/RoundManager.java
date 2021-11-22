@@ -7,6 +7,7 @@ import io.github.spaceshooter.engine.component.BasicComponent;
 import io.github.spaceshooter.engine.math.Vector2f;
 import io.github.spaceshooter.space.enemy.EnemySpaceship;
 import io.github.spaceshooter.space.util.GenerationUtils;
+import io.github.spaceshooter.space.util.MovingObject;
 
 public class RoundManager extends BasicComponent {
 
@@ -47,9 +48,12 @@ public class RoundManager extends BasicComponent {
         Vector2f direction = to.sub(from).normalized();
 
         GameObject enemy = getScene().newGameObject("Enemy Spaceship");
-        EnemySpaceship spaceship = enemy.addComponent(EnemySpaceship.class);
         enemy.getTransform().setPosition(from);
-        spaceship.setDirection(direction);
+        EnemySpaceship spaceship = enemy.addComponent(EnemySpaceship.class);
+
+        MovingObject moving = enemy.addComponent(MovingObject.class);
+        moving.setDirection(direction);
+        moving.setVelocity(0.75f);
     }
 
 

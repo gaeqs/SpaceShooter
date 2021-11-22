@@ -13,6 +13,10 @@ public interface Component {
 
     GameObject getGameObject();
 
+    boolean isDestroyed();
+
+    void markAsDestroyed();
+
     default void onDestroy() {
     }
 

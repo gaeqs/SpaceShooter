@@ -16,6 +16,8 @@ public class BasicComponent implements Component {
 
     public final GameObject gameObject;
 
+    private boolean destroyed;
+
     public BasicComponent(GameObject gameObject) {
         Validate.notNull(gameObject, "Game object cannot be null!");
         this.gameObject = gameObject;
@@ -29,6 +31,16 @@ public class BasicComponent implements Component {
     @Override
     public final GameObject getGameObject() {
         return gameObject;
+    }
+
+    @Override
+    public final boolean isDestroyed() {
+        return destroyed;
+    }
+
+    @Override
+    public final void markAsDestroyed() {
+        destroyed = true;
     }
 
     @NonNull

@@ -1,4 +1,4 @@
-package io.github.spaceshooter.space.player;
+package io.github.spaceshooter.space.util;
 
 import io.github.spaceshooter.space.general.LivingComponent;
 

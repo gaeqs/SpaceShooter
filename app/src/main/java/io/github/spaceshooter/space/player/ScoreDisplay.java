@@ -1,9 +1,7 @@
-package io.github.spaceshooter.engine.component.basic;
+package io.github.spaceshooter.space.player;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
-
-import java.util.Locale;
 
 import io.github.spaceshooter.engine.GameObject;
 import io.github.spaceshooter.engine.GameView;
@@ -12,14 +10,13 @@ import io.github.spaceshooter.engine.component.GUIComponent;
 import io.github.spaceshooter.engine.component.TickableComponent;
 import io.github.spaceshooter.util.TextUtils;
 
-public class FPSViewer extends BasicComponent implements GUIComponent, TickableComponent {
+public class ScoreDisplay extends BasicComponent implements GUIComponent, TickableComponent {
 
     private final Paint paint;
-    private long lastTick = System.nanoTime();
+    private PlayerStats stats;
+    private volatile int score;
 
-    private int size;
-
-    public FPSViewer(GameObject gameObject) {
+    public ScoreDisplay(GameObject gameObject) {
         super(gameObject);
         paint = new Paint();
         paint.setColor(0);
@@ -27,21 +24,24 @@ public class FPSViewer extends BasicComponent implements GUIComponent, TickableC
         paint.setTextSize(0.05f);
     }
 
+    public PlayerStats getStats() {
+        return stats;
+    }
+
+    public void setStats(PlayerStats stats) {
+        this.stats = stats;
+    }
+
     @Override
     public void tick(float deltaSeconds) {
-        size = getScene().getGameObjectsAmount();
+        score = stats == null ? 0 : stats.score;
     }
 
     @Override
     public void draw(Canvas canvas, GameView view) {
-        long now = System.nanoTime();
-        long delay = now - lastTick;
+        String text = String.valueOf(score);
+        TextUtils.drawKernedText(canvas, text, 0.2f, 0.9f, paint);
 
-        double fps = 1_000_000_000.0 / delay;
-        String text = String.format(Locale.getDefault(), "%.2f", fps) + " (" + size + ")";
-        TextUtils.drawKernedText(canvas, text, 0.8f, 0.9f, paint);
-
-        lastTick = now;
     }
 
     @Override

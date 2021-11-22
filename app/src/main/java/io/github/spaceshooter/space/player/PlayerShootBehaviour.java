@@ -6,6 +6,7 @@ import io.github.spaceshooter.engine.component.TickableComponent;
 import io.github.spaceshooter.engine.component.basic.Joystick;
 import io.github.spaceshooter.engine.math.Vector2f;
 import io.github.spaceshooter.space.general.Bullet;
+import io.github.spaceshooter.space.util.MovingObject;
 
 public class PlayerShootBehaviour extends BasicComponent implements TickableComponent {
 
@@ -48,9 +49,13 @@ public class PlayerShootBehaviour extends BasicComponent implements TickableComp
 
 
         GameObject object = getScene().newGameObject("Bullet");
+
+        MovingObject moving = object.addComponent(MovingObject.class);
+        moving.setDirection(factor);
+        moving.setVelocity(1);
+
         Bullet bullet = object.addComponent(Bullet.class);
         bullet.setOrigin(gameObject);
-        bullet.setDirection(factor);
         bullet.getCollider().setRadius(0.05f);
         object.getTransform().setPosition(gameObject.getTransform().getPosition());
         playSound("shoot");

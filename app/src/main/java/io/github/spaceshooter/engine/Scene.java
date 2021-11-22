@@ -144,6 +144,7 @@ public class Scene {
     }
 
     void tick(float deltaSeconds) {
+        scheduler.flush();
         scheduler.tick(deltaSeconds);
 
         flushComponentQueues();

@@ -104,6 +104,7 @@ public class GameObject {
         }
         scene.notifyComponentRemoval(component);
         try {
+            component.markAsDestroyed();
             component.onDestroy();
         } catch (Throwable ex) {
             System.err.println("ERROR DESTROYING COMPONENT " + component + "!");
@@ -143,6 +144,7 @@ public class GameObject {
         components.forEach(it -> {
             scene.notifyComponentRemoval(it);
             try {
+                it.markAsDestroyed();
                 it.onDestroy();
             } catch (Throwable ex) {
                 System.err.println("ERROR DESTROYING COMPONENT " + it + "!");

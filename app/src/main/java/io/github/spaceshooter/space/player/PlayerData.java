@@ -9,10 +9,14 @@ import io.github.spaceshooter.engine.component.basic.Sprite;
 import io.github.spaceshooter.engine.component.collision.SphereCollider;
 import io.github.spaceshooter.space.general.HealthBar;
 import io.github.spaceshooter.space.general.LivingComponent;
+import io.github.spaceshooter.space.util.DamageInflicter;
+import io.github.spaceshooter.space.util.ScoreGiver;
 
 public class PlayerData extends LivingComponent implements CollisionListenerComponent, DamageInflicter {
 
     public static final int MAX_HEALTH = 100;
+
+    private final PlayerStats stats = new PlayerStats();
 
     public PlayerData(GameObject gameObject) {
         super(gameObject, MAX_HEALTH);
@@ -30,11 +34,17 @@ public class PlayerData extends LivingComponent implements CollisionListenerComp
 
         HealthBar bar = gameObject.addComponent(HealthBar.class);
         bar.setLivingComponent(this);
+        ScoreDisplay scoreDisplay = gameObject.addComponent(ScoreDisplay.class);
+        scoreDisplay.setStats(stats);
 
         Sprite sprite = gameObject.addComponent(Sprite.class);
         sprite.setBitmap(R.drawable.ship);
         SphereCollider collider = gameObject.addComponent(SphereCollider.class);
         collider.setRadius(0.05f);
+    }
+
+    public PlayerStats getStats() {
+        return stats;
     }
 
     @Override
@@ -53,6 +63,11 @@ public class PlayerData extends LivingComponent implements CollisionListenerComp
         LivingComponent living = o.getComponent(LivingComponent.class);
         if (living != null) {
             living.damage(getInflictedDamage(living));
+            if (living.isDead()) {
+                stats.enemiesDestroyed++;
+                o.getAllComponents(ScoreGiver.class).forEach(giver ->
+                        stats.score += giver.getScoreToGive());
+            }
         }
     }
 
