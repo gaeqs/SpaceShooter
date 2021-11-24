@@ -9,7 +9,7 @@ import io.github.spaceshooter.engine.component.basic.Sprite;
 import io.github.spaceshooter.engine.component.basic.Text;
 import io.github.spaceshooter.engine.component.collision.SphereCollider;
 import io.github.spaceshooter.engine.math.Vector2f;
-import io.github.spaceshooter.space.general.HealthBar;
+import io.github.spaceshooter.space.gameover.GameOverScreen;
 import io.github.spaceshooter.space.general.LivingComponent;
 import io.github.spaceshooter.space.util.DamageInflicter;
 import io.github.spaceshooter.space.util.ScoreGiver;
@@ -34,10 +34,9 @@ public class PlayerData extends LivingComponent implements CollisionListenerComp
         PlayerShootBehaviour shoot = gameObject.addComponent(PlayerShootBehaviour.class);
         shoot.setJoystick(shootJoystick);
 
-        HealthBar bar = gameObject.addComponent(HealthBar.class);
-        bar.setLivingComponent(this);
-
-        gameObject.addComponent(Text.class).setPosition(new Vector2f(0.2f, 0.9f));
+        Text scoreText = gameObject.addComponent(Text.class);
+        scoreText.setPosition(new Vector2f(0.2f, 0.2f));
+        scoreText.getPaint().setColor(0xFFFFFFFF);
         ScoreDisplay scoreDisplay = gameObject.addComponent(ScoreDisplay.class);
         scoreDisplay.setStats(stats);
 
@@ -54,6 +53,12 @@ public class PlayerData extends LivingComponent implements CollisionListenerComp
     @Override
     protected void onDeath() {
         getScene().destroyGameObject(gameObject);
+        getScene().newGameObject("Game over")
+                .addComponent(GameOverScreen.class).setStats(stats);
+       GameObject pause = getScene().findGameObject("Pause button");
+       if(pause != null) {
+           getScene().destroyGameObject(pause);
+       }
     }
 
     @Override

@@ -37,7 +37,7 @@ public class Joystick extends BasicComponent
     public Joystick(GameObject gameObject) {
         super(gameObject);
         paint = new Paint();
-        paint.setColor(0x77777777);
+        paint.setColor(0x77FFFFFF);
     }
 
     public Vector2f getFactor() {

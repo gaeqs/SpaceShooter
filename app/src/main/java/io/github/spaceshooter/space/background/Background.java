@@ -10,38 +10,60 @@ import io.github.spaceshooter.engine.component.BasicComponent;
 import io.github.spaceshooter.engine.component.DrawableComponent;
 import io.github.spaceshooter.engine.component.TickableComponent;
 import io.github.spaceshooter.engine.math.Vector2f;
+import io.github.spaceshooter.space.player.PlayerData;
 
 public class Background extends BasicComponent implements DrawableComponent, TickableComponent {
 
     private final Paint PAINT = new Paint();
-    private final Paint PAINT_DEBUG = new Paint();
     private final RectF RECT = new RectF();
     private final RectF RECT_INNER_TEMP = new RectF();
     private final RectF RECT_INNER = new RectF();
 
-    private volatile Vector2f center;
+    private final PlayerData player;
+
+    private Vector2f center;
+    private int red, green;
+
+    private float multiplier = 0;
+    private float seconds = 0;
 
     public Background(GameObject gameObject) {
         super(gameObject);
+        player = gameObject.findComponent(PlayerData.class);
     }
 
     @Override
     public void tick(float deltaSeconds) {
         center = getScene().getCamera().getPosition();
+        float health = player.getHealth() / (float) player.getMaxHealth();
+
+        float blend = 0.02f;
+        float inv = 1 - blend;
+
+        if (health > 0.5f) {
+            red = (int) (red * inv + ((1 - health) * 2 * 255) * blend);
+            green = (int) (green * inv + 255 * blend);
+        } else {
+            red = (int) (red * inv + 127 * blend);
+            green = (int) (green * inv + (health * 2 * 127) * blend);
+        }
+
+        seconds += deltaSeconds;
+        multiplier = (float) (Math.sin(seconds * (5 - health * 5)) + 2) / 3;
+
     }
 
     @Override
     public void draw(Canvas canvas, GameView view) {
         if (center == null) return;
-        PAINT.setColor(0xFF555555);
         RECT_INNER.set(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY,
                 Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
 
         int steps = 20;
 
-        int red = 255 / steps;
-        int green = 255 / steps;
-        int blue = 150 / steps;
+        int red = this.red / steps;
+        int green = this.green / steps;
+        int blue = 50 / steps;
 
         Vector2f cen = center.div(steps);
         for (int i = 0; i < steps; i++) {
@@ -58,9 +80,9 @@ public class Background extends BasicComponent implements DrawableComponent, Tic
 
             PAINT.setColor(toARGB(
                     255,
-                    red * (steps - i),
-                    green * (steps - i),
-                    blue * (steps - i)
+                    (int) (red * (steps - i) * multiplier),
+                    (int) (green * (steps - i) * multiplier),
+                    (int) (blue * (steps - i) * multiplier)
             ));
 
             canvas.drawRect(RECT, PAINT);

@@ -58,7 +58,6 @@ public class Asteroid extends LivingComponent implements
 
     @Override
     public void onCollision(Collision collision) {
-        if (isDead()) return;
         GameObject o = collision.getOtherCollider().getGameObject();
 
         Asteroid asteroid = o.getComponent(Asteroid.class);

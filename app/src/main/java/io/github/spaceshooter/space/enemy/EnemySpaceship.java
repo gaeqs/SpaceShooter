@@ -8,14 +8,12 @@ import io.github.spaceshooter.engine.component.TickableComponent;
 import io.github.spaceshooter.engine.component.basic.Sprite;
 import io.github.spaceshooter.engine.component.collision.SphereCollider;
 import io.github.spaceshooter.engine.math.Vector2f;
-import io.github.spaceshooter.space.background.PlayArea;
 import io.github.spaceshooter.space.general.Bullet;
 import io.github.spaceshooter.space.general.LivingComponent;
-import io.github.spaceshooter.space.util.DamageInflicter;
 import io.github.spaceshooter.space.player.PlayerData;
+import io.github.spaceshooter.space.util.DamageInflicter;
 import io.github.spaceshooter.space.util.MovingObject;
 import io.github.spaceshooter.space.util.ScoreGiver;
-import io.github.spaceshooter.util.Validate;
 
 public class EnemySpaceship extends LivingComponent implements
         TickableComponent, CollisionListenerComponent, DamageInflicter, ScoreGiver {
@@ -57,7 +55,6 @@ public class EnemySpaceship extends LivingComponent implements
 
     @Override
     public void onCollision(Collision collision) {
-        if (isDead()) return;
         GameObject o = collision.getOtherCollider().getGameObject();
         LivingComponent living = o.getComponent(LivingComponent.class);
         if (living != null) {
@@ -75,8 +72,11 @@ public class EnemySpaceship extends LivingComponent implements
     }
 
     private void shoot() {
-
-        Vector2f dir = player.gameObject.getTransform().getPosition()
+        if (player == null || player.isDead()) return;
+        Vector2f dir = player
+                .gameObject
+                .getTransform()
+                .getPosition()
                 .sub(gameObject.getTransform().getPosition()).normalized();
 
         GameObject object = getScene().newGameObject("Bullet");
