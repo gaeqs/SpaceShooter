@@ -27,20 +27,9 @@ public class Sprite extends BasicComponent implements DrawableComponent {
 
     private Vector2f spriteScale = new Vector2f(0.1f, 0.1f);
     private Bitmap bitmap = null;
-    private int resId;
-    private boolean dirtyResId;
 
     @Override
     public void draw(Canvas canvas, GameView view) {
-        if (dirtyResId) {
-            Resources r = view.getContext().getResources();
-            Drawable drawable = ResourcesCompat.getDrawable(r, resId, null);
-            this.bitmap = drawable instanceof BitmapDrawable
-                    ? ((BitmapDrawable) drawable).getBitmap()
-                    : null;
-            dirtyResId = false;
-        }
-
         if (bitmap == null) return;
         Transform t = gameObject.getTransform();
         matrix.reset();
@@ -79,11 +68,13 @@ public class Sprite extends BasicComponent implements DrawableComponent {
 
     public void setBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
-        dirtyResId = false;
     }
 
     public void setBitmap(int resId) {
-        this.resId = resId;
-        dirtyResId = true;
+        Resources r = getEngine().getActivity().getResources();
+        Drawable drawable = ResourcesCompat.getDrawable(r, resId, null);
+        this.bitmap = drawable instanceof BitmapDrawable
+                ? ((BitmapDrawable) drawable).getBitmap()
+                : null;
     }
 }

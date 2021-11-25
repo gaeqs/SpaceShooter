@@ -11,9 +11,9 @@ import io.github.spaceshooter.space.scene.GameScene;
 
 public class GameOverScreen extends BasicComponent {
 
-    private PlayerStats stats;
-    private Text killedEnemiesText;
-    private Text scoreText;
+    private final Text killedEnemiesText;
+    private final Text scoreText;
+    private final Text roundText;
 
     public GameOverScreen(GameObject gameObject) {
         super(gameObject);
@@ -31,14 +31,20 @@ public class GameOverScreen extends BasicComponent {
         killedEnemiesText = gameObject.addComponent(Text.class);
         killedEnemiesText.getPaint().setColor(0xFFFFFFFF);
         killedEnemiesText.getPaint().setTextSize(0.07f);
-        killedEnemiesText.setPosition(new Vector2f(gw / 2, 0.4f));
+        killedEnemiesText.setPosition(new Vector2f(gw / 2, 0.3f));
         killedEnemiesText.setCentered(true);
 
         scoreText = gameObject.addComponent(Text.class);
         scoreText.getPaint().setColor(0xFFFFFFFF);
         scoreText.getPaint().setTextSize(0.07f);
-        scoreText.setPosition(new Vector2f(gw / 2, 0.6f));
+        scoreText.setPosition(new Vector2f(gw / 2, 0.5f));
         scoreText.setCentered(true);
+
+        roundText = gameObject.addComponent(Text.class);
+        roundText.getPaint().setColor(0xFFFFFFFF);
+        roundText.getPaint().setTextSize(0.07f);
+        roundText.setPosition(new Vector2f(gw / 2, 0.7f));
+        roundText.setCentered(true);
 
 
         Text playAgain = gameObject.addComponent(Text.class);
@@ -75,8 +81,11 @@ public class GameOverScreen extends BasicComponent {
     }
 
     public void setStats(PlayerStats stats) {
-        this.stats = stats;
         killedEnemiesText.setText("Enemies destroyed: " + stats.enemiesDestroyed);
         scoreText.setText("Score: " + stats.score);
+    }
+
+    public void setRound(int round) {
+        roundText.setText("Round: " + round);
     }
 }

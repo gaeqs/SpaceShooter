@@ -1,13 +1,16 @@
 package io.github.spaceshooter.space.scene;
 
+import io.github.spaceshooter.R;
 import io.github.spaceshooter.engine.GameEngine;
 import io.github.spaceshooter.engine.GameObject;
 import io.github.spaceshooter.engine.Scene;
 import io.github.spaceshooter.engine.camera.CameraScreenMode;
 import io.github.spaceshooter.engine.component.basic.Button;
 import io.github.spaceshooter.engine.component.basic.FPSViewer;
+import io.github.spaceshooter.engine.component.basic.Image;
 import io.github.spaceshooter.engine.component.basic.Text;
 import io.github.spaceshooter.engine.gui.GUIComponentArea;
+import io.github.spaceshooter.engine.math.Area;
 import io.github.spaceshooter.engine.math.Vector2f;
 import io.github.spaceshooter.engine.sound.SoundManager;
 import io.github.spaceshooter.space.background.Background;
@@ -63,9 +66,16 @@ public class GameScene extends Scene {
 
     private void initPauseButton() {
         GameObject pause = newGameObject("Pause button");
+
+        GUIComponentArea area = new GUIComponentArea(Vector2f.ZERO,
+                new Vector2f(0.2f, 0.2f), false, true);
+
         Button button = pause.addComponent(Button.class);
-        button.setArea(new GUIComponentArea(Vector2f.ZERO,
-                new Vector2f(0.2f, 0.2f), false, true));
+        button.setArea(area);
         button.setOnPress(() -> getEngine().setScene(new PauseScene(getEngine(), this)));
+
+        Image image = pause.addComponent(Image.class);
+        image.setArea(area);
+        image.setBitmap(R.drawable.icon_pause);
     }
 }

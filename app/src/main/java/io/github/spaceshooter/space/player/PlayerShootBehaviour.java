@@ -6,6 +6,7 @@ import io.github.spaceshooter.engine.component.TickableComponent;
 import io.github.spaceshooter.engine.component.basic.Joystick;
 import io.github.spaceshooter.engine.math.Vector2f;
 import io.github.spaceshooter.space.general.Bullet;
+import io.github.spaceshooter.space.general.Team;
 import io.github.spaceshooter.space.util.MovingObject;
 
 public class PlayerShootBehaviour extends BasicComponent implements TickableComponent {
@@ -14,6 +15,10 @@ public class PlayerShootBehaviour extends BasicComponent implements TickableComp
     private float secondsPerShoot = 0.1f;
     private float time = 0.0f;
 
+    private float lastShoot = 0.0f;
+
+    private PlayerData player;
+
     public PlayerShootBehaviour(GameObject gameObject) {
         super(gameObject);
     }
@@ -21,14 +26,12 @@ public class PlayerShootBehaviour extends BasicComponent implements TickableComp
 
     @Override
     public void tick(float deltaSeconds) {
+        time += deltaSeconds;
+        float charge = time - lastShoot;
         if (joystick.isExecuting()) {
-            time += deltaSeconds;
-            while (time >= secondsPerShoot) {
+            if (charge >= secondsPerShoot) {
                 shoot();
-                time -= secondsPerShoot;
             }
-        } else {
-            time = Math.min(time + deltaSeconds, secondsPerShoot);
         }
     }
 
@@ -40,24 +43,47 @@ public class PlayerShootBehaviour extends BasicComponent implements TickableComp
         this.joystick = joystick;
     }
 
-    private void shoot() {
+    public PlayerData getPlayer() {
+        return player;
+    }
 
+    public void setPlayer(PlayerData player) {
+        this.player = player;
+    }
+
+    private void shoot() {
         Vector2f factor = joystick.getFactor();
         float magnitude = factor.magnitudeSquared();
-        if(magnitude < 0.1) return;
+        if (magnitude < 0.1) return;
         factor = factor.div((float) Math.sqrt(magnitude));
 
-
         GameObject object = getScene().newGameObject("Bullet");
-
         MovingObject moving = object.addComponent(MovingObject.class);
         moving.setDirection(factor);
-        moving.setVelocity(1);
-
         Bullet bullet = object.addComponent(Bullet.class);
         bullet.setOrigin(gameObject);
-        bullet.getCollider().setRadius(0.05f);
+        bullet.setTeam(player == null ? Team.TEAM_1 : player.getTeam());
+
         object.getTransform().setPosition(gameObject.getTransform().getPosition());
+        object.getTransform().lookAt(factor);
+
+        float charge = time - lastShoot;
+        if (charge < secondsPerShoot * 2) {
+            moving.setVelocity(1);
+
+            bullet.setOrigin(gameObject);
+            bullet.getCollider().setRadius(0.05f);
+        } else {
+            charge = Math.min(charge - secondsPerShoot * 2, 5) + 1;
+            moving.setVelocity(1 / charge);
+
+            bullet.getCollider().setRadius(0.05f * charge);
+            bullet.setSpriteScale(bullet.getSpriteScale().mul(charge));
+            bullet.setInfringedDamage((int) (5 * charge * charge));
+            bullet.setMaximumDamageableElements((int) (charge * charge));
+        }
+
         playSound("shoot");
+        lastShoot = time;
     }
 }

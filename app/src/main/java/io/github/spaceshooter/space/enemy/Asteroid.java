@@ -5,6 +5,7 @@ import io.github.spaceshooter.engine.GameObject;
 import io.github.spaceshooter.engine.collision.Collision;
 import io.github.spaceshooter.engine.component.CollisionListenerComponent;
 import io.github.spaceshooter.engine.component.TickableComponent;
+import io.github.spaceshooter.engine.component.basic.CollisionDebugger;
 import io.github.spaceshooter.engine.component.basic.Sprite;
 import io.github.spaceshooter.engine.component.collision.SphereCollider;
 import io.github.spaceshooter.engine.math.Vector2f;
@@ -27,7 +28,7 @@ public class Asteroid extends LivingComponent implements
 
         sprite = gameObject.addComponent(Sprite.class);
         sprite.setBitmap(R.drawable.asteroid);
-        sprite.setSpriteScale(new Vector2f(0.2f, 0.2f));
+        sprite.setSpriteScale(new Vector2f(0.15f, 0.15f));
 
         SphereCollider collider = gameObject.addComponent(SphereCollider.class);
         collider.setRadius(0.05f);

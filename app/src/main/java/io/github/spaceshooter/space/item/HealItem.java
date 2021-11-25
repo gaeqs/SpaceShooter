@@ -17,10 +17,10 @@ public class HealItem extends BasicComponent implements CollisionListenerCompone
 
         Sprite sprite = gameObject.addComponent(Sprite.class);
         sprite.setBitmap(R.drawable.heal_item);
-        sprite.setSpriteScale(new Vector2f(0.15f, 0.15f));
+        sprite.setSpriteScale(new Vector2f(0.244f, 0.10f));
 
         SphereCollider collider = gameObject.addComponent(SphereCollider.class);
-        collider.setRadius(0.07f);
+        collider.setRadius(0.08f);
     }
 
     @Override

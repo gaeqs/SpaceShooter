@@ -49,7 +49,7 @@ public class Background extends BasicComponent implements DrawableComponent, Tic
         }
 
         seconds += deltaSeconds;
-        multiplier = (float) (Math.sin(seconds * (5 - health * 5)) + 2) / 3;
+        multiplier = (float) (Math.sin(seconds * (5 - health * 5)) + 3) / 4;
 
     }
 
@@ -80,9 +80,9 @@ public class Background extends BasicComponent implements DrawableComponent, Tic
 
             PAINT.setColor(toARGB(
                     255,
-                    (int) (red * (steps - i) * multiplier),
-                    (int) (green * (steps - i) * multiplier),
-                    (int) (blue * (steps - i) * multiplier)
+                    (int) (red * (steps + i) * multiplier),
+                    (int) (green * (steps + i) * multiplier),
+                    (int) (blue * (steps + i) * multiplier)
             ));
 
             canvas.drawRect(RECT, PAINT);
@@ -106,6 +106,10 @@ public class Background extends BasicComponent implements DrawableComponent, Tic
 
 
     private static int toARGB(int alpha, int red, int green, int blue) {
+        alpha = Math.min(Math.max(alpha, 0), 255);
+        red = Math.min(Math.max(red, 0), 255);
+        green = Math.min(Math.max(green, 0), 255);
+        blue = Math.min(Math.max(blue, 0), 255);
         return (alpha << 24) |
                 (red << 16) |
                 (green << 8) |

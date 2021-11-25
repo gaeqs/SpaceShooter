@@ -1,5 +1,7 @@
 package io.github.spaceshooter.engine.gui;
 
+import android.graphics.RectF;
+
 import io.github.spaceshooter.engine.GameView;
 import io.github.spaceshooter.engine.math.Area;
 import io.github.spaceshooter.engine.math.Vector2f;
@@ -64,5 +66,11 @@ public class GUIComponentArea {
     public Area getArea(GameView view) {
         Vector2f start = getStartPosition(view);
         return new Area(start, start.add(size));
+    }
+
+    public RectF getRect(GameView view) {
+        Vector2f start = getStartPosition(view);
+        return new RectF(start.x(), start.y(),
+                start.x() + size.x(), start.y() + size.y());
     }
 }
