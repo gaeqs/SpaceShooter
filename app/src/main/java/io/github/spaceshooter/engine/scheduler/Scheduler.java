@@ -35,9 +35,12 @@ public class Scheduler {
 
             if (!current.getOwner().isDestroyed()) {
                 try {
+                    current.getOwner().getGameObject().getLock().lock();
                     current.getRunnable().run();
+                    current.getOwner().getGameObject().getLock().unlock();
                 } catch (Exception ex) {
                     System.err.println("Error executing RunAfter task.");
+                    ex.printStackTrace();
                 }
 
             }

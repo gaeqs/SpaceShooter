@@ -119,6 +119,11 @@ public class Vector2f {
         );
     }
 
+
+    public Vector2f neg() {
+        return new Vector2f(-x, -y);
+    }
+
     @NonNull
     @Override
     public String toString() {
@@ -137,5 +142,4 @@ public class Vector2f {
     public int hashCode() {
         return Objects.hash(x, y);
     }
-
 }

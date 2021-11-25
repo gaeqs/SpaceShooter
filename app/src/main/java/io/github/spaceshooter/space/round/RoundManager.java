@@ -7,6 +7,7 @@ import io.github.spaceshooter.engine.component.BasicComponent;
 import io.github.spaceshooter.engine.component.basic.Text;
 import io.github.spaceshooter.engine.math.Vector2f;
 import io.github.spaceshooter.space.enemy.EnemySpaceship;
+import io.github.spaceshooter.space.enemy.Snake;
 import io.github.spaceshooter.space.general.Team;
 import io.github.spaceshooter.space.util.GenerationUtils;
 import io.github.spaceshooter.space.util.MovingObject;
@@ -65,14 +66,33 @@ public class RoundManager extends BasicComponent {
         Vector2f to = new Vector2f(random.nextFloat() - 0.5f, random.nextFloat() - 0.5f);
         Vector2f direction = to.sub(from).normalized();
 
-        GameObject enemy = getScene().newGameObject("Enemy Spaceship");
-        enemy.getTransform().setPosition(from);
-        EnemySpaceship spaceship = enemy.addComponent(EnemySpaceship.class);
-        spaceship.setTeam(random.nextBoolean() ? Team.TEAM_1 : Team.TEAM_2);
 
-        MovingObject moving = enemy.addComponent(MovingObject.class);
-        moving.setDirection(direction);
-        moving.setVelocity(0.75f);
+        if (random.nextDouble() < 0.9) {
+            int max = random.nextInt(5) + 3;
+            for (int i = 0; i < max; i++) {
+                GameObject enemy = getScene().newGameObject("Snake");
+
+                MovingObject moving = enemy.addComponent(MovingObject.class);
+                moving.setDirection(direction);
+                moving.setVelocity(0.75f);
+
+                enemy.getTransform().setPosition(from.add(direction.mul(i * 0.1f)));
+                Snake snake = enemy.addComponent(Snake.class);
+                snake.setTeam(random.nextBoolean() ? Team.TEAM_1 : Team.TEAM_2);
+                snake.setTime(i);
+            }
+        } else {
+            GameObject enemy = getScene().newGameObject("Enemy Spaceship");
+
+            MovingObject moving = enemy.addComponent(MovingObject.class);
+            moving.setDirection(direction);
+            moving.setVelocity(0.75f);
+            enemy.getTransform().setPosition(from);
+            EnemySpaceship spaceship = enemy.addComponent(EnemySpaceship.class);
+            spaceship.setTeam(random.nextBoolean() ? Team.TEAM_1 : Team.TEAM_2);
+        }
+
+
     }
 
 
