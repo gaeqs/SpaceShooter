@@ -7,13 +7,17 @@ import io.github.spaceshooter.engine.component.basic.Text;
 import io.github.spaceshooter.engine.gui.GUIComponentArea;
 import io.github.spaceshooter.engine.math.Vector2f;
 import io.github.spaceshooter.space.player.PlayerStats;
+import io.github.spaceshooter.space.player.ShipType;
 import io.github.spaceshooter.space.scene.GameScene;
+import io.github.spaceshooter.space.scene.MainMenuScene;
 
 public class GameOverScreen extends BasicComponent {
 
     private final Text killedEnemiesText;
     private final Text scoreText;
     private final Text roundText;
+
+    private ShipType shipType = ShipType.NORMAL;
 
     public GameOverScreen(GameObject gameObject) {
         super(gameObject);
@@ -69,7 +73,8 @@ public class GameOverScreen extends BasicComponent {
                 false
         ));
 
-        playAgainButton.setOnPress(() -> getEngine().setScene(new GameScene(getEngine())));
+        playAgainButton.setOnPress(() ->
+                getEngine().setScene(new GameScene(getEngine(), shipType)));
 
         Button mainMenuButton = gameObject.addComponent(Button.class);
         mainMenuButton.setArea(new GUIComponentArea(
@@ -78,6 +83,12 @@ public class GameOverScreen extends BasicComponent {
                 false,
                 false
         ));
+
+        mainMenuButton.setOnPress(() -> getEngine().setScene(new MainMenuScene(getEngine())));
+    }
+
+    public void setShipType(ShipType shipType) {
+        this.shipType = shipType;
     }
 
     public void setStats(PlayerStats stats) {

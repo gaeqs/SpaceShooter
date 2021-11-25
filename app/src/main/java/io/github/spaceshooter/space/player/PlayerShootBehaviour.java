@@ -12,7 +12,6 @@ import io.github.spaceshooter.space.util.MovingObject;
 public class PlayerShootBehaviour extends BasicComponent implements TickableComponent {
 
     private Joystick joystick;
-    private float secondsPerShoot = 0.1f;
     private float time = 0.0f;
 
     private float lastShoot = 0.0f;
@@ -29,7 +28,7 @@ public class PlayerShootBehaviour extends BasicComponent implements TickableComp
         time += deltaSeconds;
         float charge = time - lastShoot;
         if (joystick.isExecuting()) {
-            if (charge >= secondsPerShoot) {
+            if (charge >= player.getShipType().getSecondsPerShoot()) {
                 shoot();
             }
         }
@@ -63,18 +62,19 @@ public class PlayerShootBehaviour extends BasicComponent implements TickableComp
         Bullet bullet = object.addComponent(Bullet.class);
         bullet.setOrigin(gameObject);
         bullet.setTeam(player == null ? Team.TEAM_1 : player.getTeam());
+        bullet.setInfringedDamage(player.getShipType().getBulletsDamage());
 
         object.getTransform().setPosition(gameObject.getTransform().getPosition());
         object.getTransform().lookAt(factor);
 
         float charge = time - lastShoot;
-        if (charge < secondsPerShoot * 2) {
+        if (charge < player.getShipType().getSecondsPerShoot() * 2) {
             moving.setVelocity(1);
 
             bullet.setOrigin(gameObject);
             bullet.getCollider().setRadius(0.05f);
         } else {
-            charge = Math.min(charge - secondsPerShoot * 2, 5) + 1;
+            charge = Math.min(charge - player.getShipType().getSecondsPerShoot() * 2, 5) + 1;
             moving.setVelocity(1 / charge);
 
             bullet.getCollider().setRadius(0.05f * charge);

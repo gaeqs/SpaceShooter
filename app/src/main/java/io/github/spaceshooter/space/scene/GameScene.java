@@ -10,18 +10,18 @@ import io.github.spaceshooter.engine.component.basic.FPSViewer;
 import io.github.spaceshooter.engine.component.basic.Image;
 import io.github.spaceshooter.engine.component.basic.Text;
 import io.github.spaceshooter.engine.gui.GUIComponentArea;
-import io.github.spaceshooter.engine.math.Area;
 import io.github.spaceshooter.engine.math.Vector2f;
 import io.github.spaceshooter.engine.sound.SoundManager;
 import io.github.spaceshooter.space.background.Background;
 import io.github.spaceshooter.space.background.PlayArea;
 import io.github.spaceshooter.space.enemy.PasiveElementsGenerator;
 import io.github.spaceshooter.space.player.PlayerData;
+import io.github.spaceshooter.space.player.ShipType;
 import io.github.spaceshooter.space.round.RoundManager;
 
 public class GameScene extends Scene {
 
-    public GameScene(GameEngine engine) {
+    public GameScene(GameEngine engine, ShipType type) {
         super(engine);
 
         registerSounds();
@@ -36,7 +36,7 @@ public class GameScene extends Scene {
         GameObject roundManager = newGameObject("Round Manager");
         roundManager.addComponent(RoundManager.class);
 
-        initPlayer();
+        initPlayer(type);
         initAsteroidGenerator();
         initBackground();
         initPauseButton();
@@ -47,10 +47,10 @@ public class GameScene extends Scene {
         m.registerSound("shoot", "shoot.wav");
     }
 
-    private void initPlayer() {
+    private void initPlayer(ShipType type) {
         GameObject player = newGameObject("Player");
         player.getTransform().rotate(90);
-        player.addComponent(PlayerData.class);
+        player.addComponent(PlayerData.class).setShipType(type);
     }
 
     private void initAsteroidGenerator() {

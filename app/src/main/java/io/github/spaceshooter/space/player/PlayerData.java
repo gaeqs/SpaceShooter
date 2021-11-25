@@ -19,6 +19,7 @@ import io.github.spaceshooter.space.general.Teamable;
 import io.github.spaceshooter.space.round.RoundManager;
 import io.github.spaceshooter.space.util.DamageInflicter;
 import io.github.spaceshooter.space.util.ScoreGiver;
+import io.github.spaceshooter.util.Validate;
 
 public class PlayerData extends LivingComponent implements
         CollisionListenerComponent, DamageInflicter, Teamable {
@@ -28,6 +29,7 @@ public class PlayerData extends LivingComponent implements
     private final PlayerStats stats = new PlayerStats();
     private final Sprite sprite;
 
+    private ShipType shipType = ShipType.NORMAL;
     private Team team = Team.TEAM_1;
 
     public PlayerData(GameObject gameObject) {
@@ -50,6 +52,7 @@ public class PlayerData extends LivingComponent implements
         PlayerMovementBehaviour movement = gameObject.addComponent(PlayerMovementBehaviour.class);
         movement.setMovementJoystick(movementJoystick);
         movement.setShootJoystick(shootJoystick);
+        movement.setPlayer(this);
 
         PlayerShootBehaviour shoot = gameObject.addComponent(PlayerShootBehaviour.class);
         shoot.setJoystick(shootJoystick);
@@ -79,8 +82,21 @@ public class PlayerData extends LivingComponent implements
     }
 
     public void setTeam(Team team) {
+        Validate.notNull(team, "Team cannot be null!");
         this.team = team;
-        sprite.setBitmap(team == Team.TEAM_1 ? R.drawable.ship_black : R.drawable.ship_red);
+        sprite.setBitmap(shipType.getSprite(team));
+    }
+
+    public ShipType getShipType() {
+        return shipType;
+    }
+
+    public void setShipType(ShipType shipType) {
+        Validate.notNull(shipType, "Ship type cannot be null!");
+        this.shipType = shipType;
+        setTeam(team);
+        setMaxHealth(shipType.getMaxHealth());
+        setHealth(shipType.getMaxHealth());
     }
 
     @Override
@@ -90,6 +106,7 @@ public class PlayerData extends LivingComponent implements
         GameOverScreen screen = getScene().newGameObject("Game over")
                 .addComponent(GameOverScreen.class);
         screen.setStats(stats);
+        screen.setShipType(shipType);
 
 
         GameObject pause = getScene().findGameObject("Pause button");

@@ -7,7 +7,6 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import io.github.spaceshooter.counter.GameFragment;
-import io.github.spaceshooter.counter.MainMenuFragment;
 
 public class ScaffoldActivity extends AppCompatActivity {
 
@@ -19,15 +18,10 @@ public class ScaffoldActivity extends AppCompatActivity {
         setContentView(R.layout.activity_scaffold);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new MainMenuFragment(), TAG_FRAGMENT)
+                    .add(R.id.container, new GameFragment(), TAG_FRAGMENT)
                     .commit();
         }
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
-    }
-
-    public void startGame() {
-        // Navigate the the game fragment, which makes the start automatically
-        navigateToFragment(new GameFragment());
     }
 
     private void navigateToFragment(BaseFragment dst) {
@@ -44,11 +38,6 @@ public class ScaffoldActivity extends AppCompatActivity {
         if (fragment == null || !fragment.onBackPressed()) {
             super.onBackPressed();
         }
-    }
-
-    public void navigateBack() {
-        // Do a push on the navigation history
-        super.onBackPressed();
     }
 
     @Override

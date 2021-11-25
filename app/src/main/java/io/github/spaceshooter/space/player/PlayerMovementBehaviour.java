@@ -12,7 +12,7 @@ public class PlayerMovementBehaviour extends BasicComponent implements TickableC
 
     private Joystick movementJoystick;
     private Joystick shootJoystick;
-    private final Vector2f velocity = Vector2f.ONE;
+    private PlayerData player;
 
     public PlayerMovementBehaviour(GameObject gameObject) {
         super(gameObject);
@@ -34,12 +34,21 @@ public class PlayerMovementBehaviour extends BasicComponent implements TickableC
         this.shootJoystick = shootJoystick;
     }
 
+    public PlayerData getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(PlayerData player) {
+        this.player = player;
+    }
+
     @Override
     public void tick(float deltaSeconds) {
         rotate();
         if (movementJoystick == null) return;
 
-        Vector2f movement = movementJoystick.getFactor().mul(velocity).mul(deltaSeconds);
+        Vector2f movement = movementJoystick.getFactor()
+                .mul(player.getShipType().getSpeed()).mul(deltaSeconds);
 
         Vector2f start = gameObject.getTransform().getPosition();
         Vector2f toX = start.add(movement.x(), 0);
