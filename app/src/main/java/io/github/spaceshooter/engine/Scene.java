@@ -106,27 +106,33 @@ public class Scene {
 
         if (TickableComponent.class.isAssignableFrom(component)) {
             return (T) tickableComponents.stream().filter(component::isInstance)
-                    .findFirst().orElse(null);
+                    .findFirst()
+                    .orElseGet(() -> (TickableComponent) findComponentInComponentsToAdd(component));
         }
         if (DrawableComponent.class.isAssignableFrom(component)) {
-            return (T) tickableComponents.stream().filter(component::isInstance)
-                    .findFirst().orElse(null);
+            return (T) drawableComponents.stream().filter(component::isInstance)
+                    .findFirst()
+                    .orElseGet(() -> (DrawableComponent) findComponentInComponentsToAdd(component));
         }
         if (GUIComponent.class.isAssignableFrom(component)) {
-            return (T) tickableComponents.stream().filter(component::isInstance)
-                    .findFirst().orElse(null);
+            return (T) guiComponents.stream().filter(component::isInstance)
+                    .findFirst()
+                    .orElseGet(() -> (GUIComponent) findComponentInComponentsToAdd(component));
         }
         if (ColliderComponent.class.isAssignableFrom(component)) {
-            return (T) tickableComponents.stream().filter(component::isInstance)
-                    .findFirst().orElse(null);
+            return (T) colliderComponents.stream().filter(component::isInstance)
+                    .findFirst()
+                    .orElseGet(() -> (SphereCollider) findComponentInComponentsToAdd(component));
         }
         if (InputListenerComponent.class.isAssignableFrom(component)) {
-            return (T) tickableComponents.stream().filter(component::isInstance)
-                    .findFirst().orElse(null);
+            return (T) inputListenerComponents.stream().filter(component::isInstance)
+                    .findFirst()
+                    .orElseGet(() -> (InputListenerComponent) findComponentInComponentsToAdd(component));
         }
         if (GameStatusListenerComponent.class.isAssignableFrom(component)) {
-            return (T) tickableComponents.stream().filter(component::isInstance)
-                    .findFirst().orElse(null);
+            return (T) gameStatusListenerComponents.stream().filter(component::isInstance)
+                    .findFirst()
+                    .orElseGet(() -> (GameStatusListenerComponent) findComponentInComponentsToAdd(component));
         }
 
         // Slow discovery:
@@ -137,6 +143,11 @@ public class Scene {
         }
 
         return null;
+    }
+
+    private <T extends Component> T findComponentInComponentsToAdd(Class<T> component) {
+        return (T) componentsToAdd.stream()
+                .filter(component::isInstance).findFirst().orElse(null);
     }
 
     public void runAfter(Component owner, float seconds, Runnable runnable) {

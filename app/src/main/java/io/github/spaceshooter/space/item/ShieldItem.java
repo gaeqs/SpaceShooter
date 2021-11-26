@@ -16,7 +16,7 @@ public class ShieldItem extends BasicComponent implements CollisionListenerCompo
         super(gameObject);
 
         Sprite sprite = gameObject.addComponent(Sprite.class);
-        sprite.setBitmap(R.drawable.bear_red);
+        sprite.setBitmap(R.drawable.shield_item);
         sprite.setSpriteScale(new Vector2f(0.244f, 0.10f));
 
         SphereCollider collider = gameObject.addComponent(SphereCollider.class);
@@ -29,6 +29,7 @@ public class ShieldItem extends BasicComponent implements CollisionListenerCompo
                 .getGameObject().getComponent(PlayerData.class);
 
         if (data != null) {
+            playSound("shield");
             data.setShield(50);
             getScene().destroyGameObject(gameObject);
         }

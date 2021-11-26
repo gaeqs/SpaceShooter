@@ -5,6 +5,7 @@ import io.github.spaceshooter.engine.GameObject;
 import io.github.spaceshooter.engine.collision.Collision;
 import io.github.spaceshooter.engine.component.CollisionListenerComponent;
 import io.github.spaceshooter.engine.component.TickableComponent;
+import io.github.spaceshooter.engine.component.basic.CollisionDebugger;
 import io.github.spaceshooter.engine.component.basic.Sprite;
 import io.github.spaceshooter.engine.component.collision.SphereCollider;
 import io.github.spaceshooter.engine.math.Vector2f;
@@ -34,11 +35,11 @@ public class Snake extends LivingComponent implements
         moving = gameObject.getComponent(MovingObject.class);
 
         sprite = gameObject.addComponent(Sprite.class);
-        sprite.setBitmap(R.drawable.ship_red);
-        sprite.setSpriteScale(new Vector2f(0.1f, 0.15f));
+        sprite.setBitmap(R.drawable.snake_black);
+        sprite.setSpriteScale(new Vector2f(0.1f, 0.1f));
 
         SphereCollider collider = gameObject.addComponent(SphereCollider.class);
-        collider.setRadius(0.08f);
+        collider.setRadius(0.06f);
     }
 
     @Override
@@ -58,7 +59,7 @@ public class Snake extends LivingComponent implements
 
     public void setTeam(Team team) {
         this.team = team;
-        sprite.setBitmap(team == Team.TEAM_1 ? R.drawable.ship_black : R.drawable.ship_red);
+        sprite.setBitmap(team == Team.TEAM_1 ? R.drawable.snake_black : R.drawable.snake_red);
     }
 
     public float getTime() {
@@ -95,6 +96,7 @@ public class Snake extends LivingComponent implements
     @Override
     protected void onDeath() {
         getScene().destroyGameObject(gameObject);
+        playSound("explosion", getRandom().nextFloat() * 0.75f + 0.75f);
     }
 
     @Override

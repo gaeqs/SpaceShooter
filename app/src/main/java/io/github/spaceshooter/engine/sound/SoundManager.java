@@ -13,7 +13,8 @@ import java.util.Map;
 public class SoundManager {
 
     public static final int MAX_STREAMS = 10;
-    public static final float DEFAULT_MUSIC_VOLUME = 0.6f;
+    public static final float DEFAULT_MUSIC_VOLUME = 1f;
+    public static final float DEFAULT_FX_VOLUME = 0.5f;
 
     private final Context context;
     private final SoundPool pool;
@@ -49,18 +50,32 @@ public class SoundManager {
     public void play(String sound) {
         Integer id = registeredSounds.get(sound);
         if (id != null) {
-            pool.play(id, 1.0f, 1.0f, 0, 0, 1.0f);
+            pool.play(id, DEFAULT_FX_VOLUME, DEFAULT_FX_VOLUME, 0, 0, 1.0f);
+        }
+    }
+
+    public void play(String sound, float rate) {
+        Integer id = registeredSounds.get(sound);
+        if (id != null) {
+            pool.play(id, DEFAULT_FX_VOLUME, DEFAULT_FX_VOLUME, 0, 0, rate);
+        }
+    }
+
+    public void play(String sound, float volume, float rate) {
+        Integer id = registeredSounds.get(sound);
+        if (id != null) {
+            pool.play(id, volume * DEFAULT_FX_VOLUME,
+                    volume * DEFAULT_FX_VOLUME, 0, 0, rate);
         }
     }
 
     public void playMusic(String file) {
         if (musicPlayer != null) {
             musicPlayer.stop();
-        } else {
-            musicPlayer = new MediaPlayer();
+            musicPlayer.release();
         }
+        musicPlayer = new MediaPlayer();
         try {
-
             AssetFileDescriptor afd = context.getAssets().openFd("sfx/" + file);
             musicPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             afd.close();

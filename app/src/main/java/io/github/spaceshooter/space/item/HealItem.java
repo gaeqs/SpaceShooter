@@ -29,6 +29,7 @@ public class HealItem extends BasicComponent implements CollisionListenerCompone
                 .getGameObject().getComponent(PlayerData.class);
 
         if (data != null) {
+            playSound("health");
             data.heal(20);
             getScene().destroyGameObject(gameObject);
         }

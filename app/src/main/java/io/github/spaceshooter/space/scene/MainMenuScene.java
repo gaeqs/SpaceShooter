@@ -1,10 +1,12 @@
 package io.github.spaceshooter.space.scene;
 
+import io.github.spaceshooter.R;
 import io.github.spaceshooter.engine.GameEngine;
 import io.github.spaceshooter.engine.GameObject;
 import io.github.spaceshooter.engine.GameView;
 import io.github.spaceshooter.engine.Scene;
 import io.github.spaceshooter.engine.component.BasicComponent;
+import io.github.spaceshooter.engine.component.basic.BackgroundImage;
 import io.github.spaceshooter.engine.component.basic.Button;
 import io.github.spaceshooter.engine.component.basic.Circle;
 import io.github.spaceshooter.engine.component.basic.Image;
@@ -37,10 +39,15 @@ public class MainMenuScene extends Scene {
         GameObject o = newGameObject("Title");
         Text text = o.addComponent(Text.class);
         text.getPaint().setColor(0xFF000000);
-        text.getPaint().setTextSize(0.2f);
+        text.getPaint().setTextSize(0.17f);
         text.setCentered(true);
         text.setText("Candy wars");
         text.setPosition(new Vector2f(view.getGUIWidth() / 2, 0.25f));
+
+        Image image = o.addComponent(BackgroundImage.class);
+        image.setBitmap(R.drawable.background);
+        image.setArea(new GUIComponentArea(Vector2f.ZERO, new Vector2f(view.getGUIWidth(), 1),
+                false, false));
     }
 
     private void initShips(GameView view) {
@@ -52,7 +59,7 @@ public class MainMenuScene extends Scene {
         int i = 0;
         for (ShipType type : types) {
             GameObject object = newGameObject("Ship Type");
-            Vector2f offset = new Vector2f(gw / 2 - (size2 - i) * 0.3f - 0.1f, 0.5f);
+            Vector2f offset = new Vector2f(gw / 2 - (size2 - i) * 0.3f - 0.1f, 0.35f);
             Vector2f size = new Vector2f(0.2f, 0.2f);
 
             GUIComponentArea area = new GUIComponentArea(offset, size,
@@ -89,8 +96,8 @@ public class MainMenuScene extends Scene {
         GameObject o = newGameObject("Button");
 
         GUIComponentArea area =
-                new GUIComponentArea(new Vector2f(0.2f, 0.7f),
-                        new Vector2f(view.getGUIWidth() - 0.4f, 0.3f),
+                new GUIComponentArea(new Vector2f(0.4f, 0.5f),
+                        new Vector2f(view.getGUIWidth() - 0.8f, 0.4f),
                         false, false);
 
         Button button = o.addComponent(Button.class);
@@ -102,7 +109,7 @@ public class MainMenuScene extends Scene {
         text.setText("Let's play!");
         text.getPaint().setColor(0xFF000000);
         text.getPaint().setTextSize(0.1f);
-        text.setPosition(new Vector2f(view.getGUIWidth() / 2, 0.9f));
+        text.setPosition(new Vector2f(view.getGUIWidth() / 2, 0.7f));
         text.setCentered(true);
 
 

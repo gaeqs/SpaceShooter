@@ -50,6 +50,13 @@ public class PlayerShootBehaviour extends BasicComponent implements TickableComp
         this.player = player;
     }
 
+    public float getCharge() {
+        float charge = time - lastShoot;
+        if (charge < player.getShipType().getSecondsPerShoot() * 2) return 0;
+        charge = Math.min(charge - player.getShipType().getSecondsPerShoot() * 2, 5);
+        return charge / 5;
+    }
+
     private void shoot() {
         Vector2f factor = joystick.getFactor();
         float magnitude = factor.magnitudeSquared();
@@ -83,7 +90,7 @@ public class PlayerShootBehaviour extends BasicComponent implements TickableComp
             bullet.setMaximumDamageableElements((int) (charge * charge));
         }
 
-        playSound("shoot");
+        playSound("shoot", 0.7f, getRandom().nextFloat() * 0.5f + 0.75f);
         lastShoot = time;
     }
 }

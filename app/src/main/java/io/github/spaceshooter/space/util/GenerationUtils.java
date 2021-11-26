@@ -12,11 +12,11 @@ public class GenerationUtils {
         if (random.nextBoolean()) {
             x = random.nextBoolean() ? PlayArea.DESPAWN_AREA.left : PlayArea.DESPAWN_AREA.right;
             float p = random.nextFloat();
-            y = p * PlayArea.DESPAWN_AREA.top + p * PlayArea.DESPAWN_AREA.bottom;
+            y = p * PlayArea.DESPAWN_AREA.top + (1 - p) * PlayArea.DESPAWN_AREA.bottom;
         } else {
             y = random.nextBoolean() ? PlayArea.DESPAWN_AREA.bottom : PlayArea.DESPAWN_AREA.top;
             float p = random.nextFloat();
-            x = p * PlayArea.DESPAWN_AREA.bottom + p * PlayArea.DESPAWN_AREA.top;
+            x = p * PlayArea.DESPAWN_AREA.left + (1 - p) * PlayArea.DESPAWN_AREA.right;
         }
         return new Vector2f(x, y);
     }

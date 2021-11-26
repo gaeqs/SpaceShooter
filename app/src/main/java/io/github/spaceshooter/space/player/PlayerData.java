@@ -1,9 +1,12 @@
 package io.github.spaceshooter.space.player;
 
+import android.graphics.LightingColorFilter;
+
 import io.github.spaceshooter.R;
 import io.github.spaceshooter.engine.GameObject;
 import io.github.spaceshooter.engine.collision.Collision;
 import io.github.spaceshooter.engine.component.CollisionListenerComponent;
+import io.github.spaceshooter.engine.component.TickableComponent;
 import io.github.spaceshooter.engine.component.basic.Button;
 import io.github.spaceshooter.engine.component.basic.Image;
 import io.github.spaceshooter.engine.component.basic.Joystick;
@@ -22,12 +25,13 @@ import io.github.spaceshooter.space.util.ScoreGiver;
 import io.github.spaceshooter.util.Validate;
 
 public class PlayerData extends LivingComponent implements
-        CollisionListenerComponent, DamageInflicter, Teamable {
+        CollisionListenerComponent, DamageInflicter, Teamable, TickableComponent {
 
     public static final int MAX_HEALTH = 100;
 
     private final PlayerStats stats = new PlayerStats();
     private final Sprite sprite;
+    private final PlayerShootBehaviour shootBehaviour;
 
     private ShipType shipType = ShipType.NORMAL;
     private Team team = Team.TEAM_1;
@@ -54,9 +58,9 @@ public class PlayerData extends LivingComponent implements
         movement.setShootJoystick(shootJoystick);
         movement.setPlayer(this);
 
-        PlayerShootBehaviour shoot = gameObject.addComponent(PlayerShootBehaviour.class);
-        shoot.setJoystick(shootJoystick);
-        shoot.setPlayer(this);
+        shootBehaviour = gameObject.addComponent(PlayerShootBehaviour.class);
+        shootBehaviour.setJoystick(shootJoystick);
+        shootBehaviour.setPlayer(this);
 
         Text scoreText = gameObject.addComponent(Text.class);
         scoreText.setPosition(new Vector2f(0.2f, 0.2f));
@@ -97,6 +101,15 @@ public class PlayerData extends LivingComponent implements
         setTeam(team);
         setMaxHealth(shipType.getMaxHealth());
         setHealth(shipType.getMaxHealth());
+    }
+
+    @Override
+    public void tick(float deltaSeconds) {
+        int charge = (int) ((1 - shootBehaviour.getCharge()) * 255);
+
+        sprite.getPaint().setColorFilter(new LightingColorFilter(
+                toARGB(255, 255, charge, charge),
+                1));
     }
 
     @Override
@@ -147,5 +160,16 @@ public class PlayerData extends LivingComponent implements
     @Override
     public int getInflictedDamage(LivingComponent livingComponent) {
         return livingComponent.getMaxHealth();
+    }
+
+    private static int toARGB(int alpha, int red, int green, int blue) {
+        alpha = Math.min(Math.max(alpha, 0), 255);
+        red = Math.min(Math.max(red, 0), 255);
+        green = Math.min(Math.max(green, 0), 255);
+        blue = Math.min(Math.max(blue, 0), 255);
+        return (alpha << 24) |
+                (red << 16) |
+                (green << 8) |
+                blue;
     }
 }

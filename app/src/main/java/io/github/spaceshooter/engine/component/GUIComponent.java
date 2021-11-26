@@ -9,9 +9,9 @@ import io.github.spaceshooter.engine.GameView;
 public interface GUIComponent extends Component {
 
     Comparator<GUIComponent> COMPARATOR = (o1, o2) -> {
-        if (o1.getDrawPriority() == o2.getDrawPriority())
-            return o1.getId() - o2.getId();
-        return o1.getDrawPriority() - o2.getDrawPriority();
+        if (o2.getDrawPriority() == o1.getDrawPriority())
+            return -Integer.compare(o2.getId(), o1.getId());
+        return -Integer.compare(o2.getDrawPriority(), o1.getDrawPriority());
     };
 
     /**

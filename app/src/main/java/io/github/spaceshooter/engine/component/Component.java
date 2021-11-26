@@ -38,6 +38,14 @@ public interface Component {
         getGameObject().getScene().getEngine().getSoundManager().play(sound);
     }
 
+    default void playSound(String sound, float rate) {
+        getGameObject().getScene().getEngine().getSoundManager().play(sound, rate);
+    }
+
+    default void playSound(String sound, float volume, float rate) {
+        getGameObject().getScene().getEngine().getSoundManager().play(sound, volume, rate);
+    }
+
     default void runLater(float seconds, Runnable runnable) {
         getGameObject().getScene().runAfter(this, seconds, runnable);
     }

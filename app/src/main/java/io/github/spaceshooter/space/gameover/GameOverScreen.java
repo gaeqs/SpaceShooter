@@ -73,8 +73,11 @@ public class GameOverScreen extends BasicComponent {
                 false
         ));
 
-        playAgainButton.setOnPress(() ->
-                getEngine().setScene(new GameScene(getEngine(), shipType)));
+        playAgainButton.setOnPress(() -> {
+                    getEngine().setScene(new GameScene(getEngine(), shipType));
+                    playSound("button");
+                }
+        );
 
         Button mainMenuButton = gameObject.addComponent(Button.class);
         mainMenuButton.setArea(new GUIComponentArea(

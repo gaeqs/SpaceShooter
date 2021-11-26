@@ -82,6 +82,7 @@ public class Asteroid extends LivingComponent implements
     @Override
     protected void onDeath() {
         getScene().destroyGameObject(gameObject);
+        playSound("explosion", getRandom().nextFloat() * 0.5f + 0.75f);
     }
 
     @Override

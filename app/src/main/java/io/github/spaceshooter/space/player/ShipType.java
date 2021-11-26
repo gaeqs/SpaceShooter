@@ -6,7 +6,7 @@ import io.github.spaceshooter.space.general.Team;
 public enum ShipType {
 
     NORMAL(1, 100, 0.1f, 5, R.drawable.ship_black, R.drawable.ship_red),
-    FAST(1.5f, 70, 0.05f, 3, R.drawable.ship_black, R.drawable.ship_red),
+    FAST(1.5f, 70, 0.05f, 3, R.drawable.ship_light_black, R.drawable.ship_light_red),
     TANK(0.7f, 200, 0.25f, 15, R.drawable.ship_black, R.drawable.ship_red);
 
     private final float speed;

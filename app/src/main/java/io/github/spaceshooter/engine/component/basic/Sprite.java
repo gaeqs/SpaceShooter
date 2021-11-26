@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
@@ -24,8 +25,10 @@ public class Sprite extends BasicComponent implements DrawableComponent {
     }
 
     private final Matrix matrix = new Matrix();
+    private Paint paint = new Paint();
 
     private Vector2f spriteScale = new Vector2f(0.1f, 0.1f);
+
     private Bitmap bitmap = null;
 
     @Override
@@ -45,7 +48,7 @@ public class Sprite extends BasicComponent implements DrawableComponent {
                 screenPosition.y() - nScale.y() / 2
         );
 
-        canvas.drawBitmap(bitmap, matrix, null);
+        canvas.drawBitmap(bitmap, matrix, paint);
     }
 
     @Override
@@ -68,6 +71,14 @@ public class Sprite extends BasicComponent implements DrawableComponent {
 
     public void setBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
+    }
+
+    public Paint getPaint() {
+        return paint;
+    }
+
+    public void setPaint(Paint paint) {
+        this.paint = paint;
     }
 
     public void setBitmap(int resId) {

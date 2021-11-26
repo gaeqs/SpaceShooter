@@ -29,9 +29,12 @@ public class GameScene extends Scene {
         getCamera().setScreenMode(CameraScreenMode.FIT_WIDTH);
         getCamera().setSize(new Vector2f(2, 2));
 
-        GameObject fpsViewer = newGameObject("FPS");
-        fpsViewer.addComponent(Text.class).setPosition(new Vector2f(1, 0.9f));
-        fpsViewer.addComponent(FPSViewer.class);
+        //
+        // GameObject fpsViewer = newGameObject("FPS");
+        //
+        // fpsViewer.addComponent(Text.class).setPosition(new Vector2f(1, 0.9f));
+        //
+        // fpsViewer.addComponent(FPSViewer.class);
 
         GameObject roundManager = newGameObject("Round Manager");
         roundManager.addComponent(RoundManager.class);
@@ -40,11 +43,17 @@ public class GameScene extends Scene {
         initAsteroidGenerator();
         initBackground();
         initPauseButton();
+
+        getEngine().getSoundManager().playMusic("battle_2.mp3");
     }
 
     private void registerSounds() {
         SoundManager m = getEngine().getSoundManager();
         m.registerSound("shoot", "shoot.wav");
+        m.registerSound("explosion", "explosion.wav");
+        m.registerSound("button", "button.wav");
+        m.registerSound("shield", "shield.wav");
+        m.registerSound("health", "health.wav");
     }
 
     private void initPlayer(ShipType type) {

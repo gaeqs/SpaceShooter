@@ -4,6 +4,7 @@ import io.github.spaceshooter.R;
 import io.github.spaceshooter.engine.GameObject;
 import io.github.spaceshooter.engine.component.BasicComponent;
 import io.github.spaceshooter.engine.component.basic.Sprite;
+import io.github.spaceshooter.engine.math.Vector2f;
 import io.github.spaceshooter.util.Validate;
 
 public abstract class LivingComponent extends BasicComponent {
@@ -21,6 +22,7 @@ public abstract class LivingComponent extends BasicComponent {
         this.health = maxHealth;
 
         shieldSprite = gameObject.addComponent(Sprite.class);
+        shieldSprite.setSpriteScale(new Vector2f(0.2f, 0.2f));
         shieldSprite.setBitmap(null);
     }
 
@@ -45,7 +47,7 @@ public abstract class LivingComponent extends BasicComponent {
         if (shield == 0) {
             shieldSprite.setBitmap(null);
         } else {
-            shieldSprite.setBitmap(R.drawable.bear_red);
+            shieldSprite.setBitmap(R.drawable.shield);
         }
     }
 
