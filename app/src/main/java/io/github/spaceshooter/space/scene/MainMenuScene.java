@@ -31,6 +31,7 @@ public class MainMenuScene extends Scene {
             initShips(engine.getGameView());
             initPlayButton(engine.getGameView());
             destroyGameObject(timerO);
+            getEngine().getSoundManager().playMusic(null);
         });
     }
 

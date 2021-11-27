@@ -74,6 +74,7 @@ public class SoundManager {
             musicPlayer.stop();
             musicPlayer.release();
         }
+        if (file == null) return;
         musicPlayer = new MediaPlayer();
         try {
             AssetFileDescriptor afd = context.getAssets().openFd("sfx/" + file);

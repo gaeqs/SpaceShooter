@@ -44,7 +44,12 @@ public class GameScene extends Scene {
         initBackground();
         initPauseButton();
 
-        getEngine().getSoundManager().playMusic("battle_2.mp3");
+        if(getRandom().nextFloat() > 0.9) {
+            getEngine().getSoundManager().playMusic("battle_2.mp3");
+        } else {
+            getEngine().getSoundManager().playMusic("battle_1.mp3");
+        }
+
     }
 
     private void registerSounds() {
