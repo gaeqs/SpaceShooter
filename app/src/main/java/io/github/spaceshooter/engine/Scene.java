@@ -28,6 +28,9 @@ import io.github.spaceshooter.engine.input.InputMoveEvent;
 import io.github.spaceshooter.engine.input.InputUpEvent;
 import io.github.spaceshooter.engine.scheduler.Scheduler;
 
+/**
+ * Represents a scene inside a game engine.
+ */
 public class Scene {
 
     private final Queue<Component> componentsToAdd = new LinkedList<>();
@@ -63,43 +66,96 @@ public class Scene {
         this.camera = new Camera(engine.getGameView());
     }
 
+    /**
+     * Returns the {@link GameEngine} of this scene.
+     *
+     * @return the {@link GameEngine}.
+     */
     public GameEngine getEngine() {
         return engine;
     }
 
+    /**
+     * Returns the {@link Camera} of this scene.
+     *
+     * @return the {@link Camera}.
+     */
     public Camera getCamera() {
         return camera;
     }
 
+    /**
+     * Returns the {@link Random} instance used by all components of this scene.
+     *
+     * @return the {@link Random}.
+     */
     public Random getRandom() {
         return random;
     }
 
+    /**
+     * Returns the amount of game objects this scene has.
+     *
+     * @return the amount of game object.
+     */
     public int getGameObjectsAmount() {
         return gameObjects.size();
     }
 
+    /**
+     * Creates a new game object.
+     * <p>
+     * The new game object's name will be "New GameObject".
+     *
+     * @return the new game object.
+     */
     public GameObject newGameObject() {
         return newGameObject("New GameObject");
     }
 
+    /**
+     * Creates a new game object with the given name.
+     *
+     * @param name the name of the new game object.
+     * @return the new game object.
+     */
     public GameObject newGameObject(String name) {
         GameObject object = new GameObject(this, name);
         gameObjects.add(object);
         return object;
     }
 
+    /**
+     * Destroys the given game object.
+     *
+     * @param gameObject the game object.
+     * @return whether the operation was successful.
+     */
     public boolean destroyGameObject(GameObject gameObject) {
         if (!gameObjects.remove(gameObject)) return false;
         gameObject.destroyAllComponents();
         return true;
     }
 
+    /**
+     * Finds a game object that matches the given name.
+     *
+     * @param name the name.
+     * @return the game object or null.
+     */
     public GameObject findGameObject(String name) {
         return gameObjects.stream().filter(it -> it.getName().equals(name))
                 .findFirst().orElse(null);
     }
 
+    /**
+     * Searches a component that matches the given type in the whole scene.
+     * <p>
+     *
+     * @param component the type of the component.
+     * @param <T>       the type of the component.
+     * @return the component or null.
+     */
     public <T extends Component> T findComponent(Class<T> component) {
 
         // Fast discovery:
@@ -150,6 +206,16 @@ public class Scene {
                 .filter(component::isInstance).findFirst().orElse(null);
     }
 
+    /**
+     * Runs the given lambda after the given seconds have passed.
+     * <p>
+     * The given code won't be executed if the given component is destroyed before
+     * the given time.
+     *
+     * @param owner    the owner component.
+     * @param seconds  the seconds.
+     * @param runnable the code to execute.
+     */
     public void runAfter(Component owner, float seconds, Runnable runnable) {
         scheduler.runAfter(owner, seconds, runnable);
     }

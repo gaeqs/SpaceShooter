@@ -13,13 +13,15 @@ public class SphereToSphereCollision extends Collision {
     private float distance;
     private boolean distanceCalculated;
 
-    public SphereToSphereCollision(SphereCollider otherCollider,
-                                   float otherRadius,
-                                   float radiusSum, float
-                                           distanceSquared,
-                                   Vector2f thisCenter,
-                                   Vector2f otherCenter) {
-        super(otherCollider);
+    public SphereToSphereCollision(
+            SphereCollider thisCollider,
+            SphereCollider otherCollider,
+            float otherRadius,
+            float radiusSum,
+            float distanceSquared,
+            Vector2f thisCenter,
+            Vector2f otherCenter) {
+        super(thisCollider, otherCollider);
         this.otherRadius = otherRadius;
         this.radiusSum = radiusSum;
         this.distanceSquared = distanceSquared;

@@ -9,9 +9,13 @@ import android.view.ViewTreeObserver;
 import io.github.spaceshooter.BaseFragment;
 import io.github.spaceshooter.R;
 import io.github.spaceshooter.engine.GameEngine;
+import io.github.spaceshooter.engine.GameObject;
 import io.github.spaceshooter.engine.Scene;
 import io.github.spaceshooter.engine.StandardGameView;
-import io.github.spaceshooter.space.scene.GameScene;
+import io.github.spaceshooter.engine.component.BasicComponent;
+import io.github.spaceshooter.engine.component.Component;
+import io.github.spaceshooter.engine.component.basic.Text;
+import io.github.spaceshooter.engine.math.Vector2f;
 import io.github.spaceshooter.space.scene.MainMenuScene;
 
 

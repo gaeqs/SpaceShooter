@@ -6,6 +6,12 @@ import java.util.Comparator;
 
 import io.github.spaceshooter.engine.GameView;
 
+/**
+ * Represents a component that can draw elements.
+ * <p>
+ * The drawn elements are modified by the
+ * {@link io.github.spaceshooter.engine.Scene scene}'s camera.
+ */
 public interface DrawableComponent extends Component {
 
     Comparator<DrawableComponent> COMPARATOR = (o1, o2) -> {

@@ -8,6 +8,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import io.github.spaceshooter.engine.GameObject;
 import io.github.spaceshooter.util.Validate;
 
+/**
+ * Basic implementation of a {@link Component}.
+ * User-defined components should extend this class.
+ */
 public class BasicComponent implements Component {
 
     private static final AtomicInteger COMPONENT_ID_GENERATOR = new AtomicInteger(0);

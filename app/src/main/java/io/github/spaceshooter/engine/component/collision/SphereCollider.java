@@ -64,7 +64,7 @@ public class SphereCollider extends BasicComponent implements ColliderComponent 
 
         float distanceSquared = thisCenter.distanceSquared(otherCenter);
         if (distanceSquared < radiusSum * radiusSum) {
-            return new SphereToSphereCollision(
+            return new SphereToSphereCollision(this,
                     collider, collider.radius, radiusSum,
                     distanceSquared, thisCenter, otherCenter);
         }

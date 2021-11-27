@@ -5,14 +5,20 @@ import io.github.spaceshooter.engine.math.Vector2f;
 
 public abstract class Collision {
 
+    private final ColliderComponent thisCollider;
     private final ColliderComponent otherCollider;
     private Vector2f collisionPoint;
     private Vector2f otherNormal;
     private float penetration;
     private boolean penetrationCalculated = false;
 
-    public Collision(ColliderComponent otherCollider) {
+    public Collision(ColliderComponent thisCollider, ColliderComponent otherCollider) {
+        this.thisCollider = thisCollider;
         this.otherCollider = otherCollider;
+    }
+
+    public ColliderComponent getThisCollider() {
+        return thisCollider;
     }
 
     public ColliderComponent getOtherCollider() {
